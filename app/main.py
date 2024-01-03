@@ -13,7 +13,7 @@ from app.database import engine, SessionLocal, Base
 
 from app.config import API_PREFIX, ALLOWED_HOSTS
 
-# from app.routers.handlers.http_error import http_error_handler
+from app.routers.handlers.http_error import http_error_handler
 
 
 
@@ -30,7 +30,7 @@ def get_application() -> FastAPI:
     application.include_router(router_api, prefix=API_PREFIX)
 
     ## Add exception handlers
-    # application.add_exception_handler(HTTPException, http_error_handler)
+    application.add_exception_handler(HTTPException, http_error_handler)
 
     ## Allow cors
     application.add_middleware(
