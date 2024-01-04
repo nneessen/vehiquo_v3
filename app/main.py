@@ -27,6 +27,7 @@ def get_application() -> FastAPI:
 
     ## Mapping api routes
     application.include_router(router_api, prefix=API_PREFIX)
+    
 
     ## Add exception handlers
     application.add_exception_handler(HTTPException, http_error_handler)
@@ -41,9 +42,7 @@ def get_application() -> FastAPI:
     )
     
     
-    @application.get("/")
-    def root():
-        return {"message": "Hello World"}
+
 
 
     return application

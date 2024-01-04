@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr
+from collections.abc import Iterable, Sequence
 from typing import List
 
 class UserBase(BaseModel):

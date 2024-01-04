@@ -18,12 +18,6 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)) -> sche
     return services.create_user(db=db, user=user)
 
 
-@router.get("/users/", status_code=status.HTTP_200_OK)
-def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = services.get_users(db, skip=skip, limit=limit)
-    return {"Status": "Success", "Users": users}
-
-
 @router.get("/users/{user_id}", status_code=status.HTTP_200_OK)
 def get_user(user_id: int, db: Session = Depends(get_db)):
     user = services.get_user(db, user_id=user_id)
@@ -33,6 +27,12 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
             detail=f"User with id {user_id} not found"
             )
     return {"Status": "Success", "User": user}
+
+
+@router.get("/users/", status_code=status.HTTP_200_OK)
+def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = services.get_users(db, skip=skip, limit=limit)
+    return {"Status": "Success", "Users": users}
 
 
 @router.delete("/users/{user_id}", response_model=schemas.User)

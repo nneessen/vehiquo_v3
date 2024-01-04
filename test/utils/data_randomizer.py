@@ -17,6 +17,10 @@ def random_phone_number() -> str:
     return f"{random.randint(1000000000, 9999999999)}"
 
 
+def random_password() -> str:
+    return random_lower_string()
+
+
 def random_user_create() -> Dict:
     return {
         "first_name": random_lower_string(),
