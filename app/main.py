@@ -6,7 +6,6 @@ from starlette.exceptions import HTTPException
 
 from app.dependencies import get_query_token, get_token_header
 
-
 from app.routers.api import router as router_api
 
 from app.database import engine, SessionLocal, Base
@@ -40,11 +39,18 @@ def get_application() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    
+    
+    @application.get("/")
+    def root():
+        return {"message": "Hello World"}
+
 
     return application
 
 
 app = get_application()
+
 
 
 @app.middleware("http")

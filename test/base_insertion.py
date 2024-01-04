@@ -1,4 +1,3 @@
-from sqlalchemy.sql import text
 
 from .config import database_test_config
 
@@ -10,29 +9,13 @@ from .config import database_test_config
 engine = database_test_config.engine
 
 
-
-
-
-
-
 def insert_into_users(input):
-    ''' Insert into table users '''
+    ''' Insert input into users table '''
+    
     with engine.connect() as con:
-
-        data = (
-            {
-                "id": input["id"],
-                "first_name": input["first_name"],
-                "last_name": input["last_name"],
-                "email": input["email"],
-                "password": input["password"],
-            },
-        )
-
-
-        statement = text(
-            """INSERT INTO users (id, first_name, last_name, email, password) VALUES (:id, :first_name, :last_name, :email, :password)"""
-        )
-
-        for line in data:
-            con.execute(statement, **line)
+        
+        statement = """INSERT INTO users (first_name, last_name, email, username, password, phone_number)
+                       VALUES ('{first_name:s}', '{last_name:s}', '{email:s}', '{username:s}', '{password:s}', '{phone_number:s}')"""
+        
+        for line in input:
+            con.execute(statement.format(**line))

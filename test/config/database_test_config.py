@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 from app.database import Base
@@ -37,10 +37,9 @@ def truncate_tables(tables):
     ''' Truncate rows of all input tables '''
     
     with engine.connect() as con:
-
-        statement = """DELETE FROM {table:s}"""
-
-        for line in tables:
-            con.execute(statement.format(table = line))
+        for table_name in tables:
+            # Build a safe statement using SQLAlchemy text
+            statement = text(f"DELETE FROM {table_name}")
+            con.execute(statement)
     
     

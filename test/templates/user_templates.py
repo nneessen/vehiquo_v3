@@ -4,10 +4,11 @@ import pytest
 @pytest.fixture
 def user_json():
     return {
-        "id": 1,
         "first_name": "Nick",
         "last_name": "Neessen",
         "email": "nick.neessen@gmail.com",
+        "username": "nickneessen",
+        "phone_number": "8594335907",
         "password": "password",
     }
 
