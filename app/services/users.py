@@ -2,7 +2,7 @@ import bcrypt
 
 from typing import List, Optional
 from sqlalchemy.orm import Session
-
+from fastapi import HTTPException
 from app.models import users as models
 from app.schemas import users as schemas
 

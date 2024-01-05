@@ -5,8 +5,9 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-# SQLALCHEMY_DATABASE_URL = "sqlite:///./app.db"
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+
+# SQLALCHEMY_DATABASE_URL = "sqlite:///./app.db" #^ FOR PRODUCTION
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db" #! FOR TESTING ONLY
 
 engine = create_engine(
     os.getenv("DB_URL", SQLALCHEMY_DATABASE_URL)
