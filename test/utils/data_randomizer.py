@@ -31,3 +31,17 @@ def random_user_create() -> Dict:
         "phone_number": random_phone_number(),
     }
     
+    
+random_user_data = random_user_create()
+
+
+def create_me() -> Dict:
+    return {
+        "first_name": "Nick",
+        "last_name": "Neessen",
+        "email": "nick.neessen@gmail.com",
+        "username": "nneessen",
+        "password": "password",
+        "phone_number": "8594335907",
+    }
+

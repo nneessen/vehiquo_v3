@@ -40,16 +40,11 @@ def get_application() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    
-    
-
-
 
     return application
 
 
 app = get_application()
-
 
 
 @app.middleware("http")
