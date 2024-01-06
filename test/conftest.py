@@ -15,8 +15,13 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///./test/test.db"
 @pytest.fixture(scope="session")
 def db() -> Generator:
     with Session(engine) as session:
-        yield session
-        
+        try:
+            yield session
+        except Exception:
+            session.rollback()
+        finally:
+            session.close()
+                    
 
 @pytest.fixture(scope="module")
 def client() -> Generator:

@@ -6,19 +6,29 @@ from app.dependencies import get_db
 
 from app.schemas import users as schemas
 from app.services import users as services
+from app.unit_of_work.unit_of_work import UnitOfWork
 
 router = APIRouter(tags=["Users"])
 
 
 @router.post("/users/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOutput)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)) -> schemas.UserOutput:
-    db_user = services.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    db_user = services.get_user_by_username(db, username=user.username)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Username already registered")
-    return services.create_user(db=db, user=user)
+    with UnitOfWork(db) as uow:
+        db_user = services.get_user_by_email(db, email=user.email)
+        if db_user:
+            raise HTTPException(
+                status_code=400, 
+                detail="Email already registered"
+                )
+        db_user = services.get_user_by_username(db, username=user.username)
+        if db_user:
+            raise HTTPException(
+                status_code=400, 
+                detail="Username already registered"
+                )
+        db_user = services.create_user(db, user=user)
+        uow.commit()
+        return db_user
 
 
 @router.get("/users/{user_id}", status_code=status.HTTP_200_OK)

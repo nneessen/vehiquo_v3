@@ -3,7 +3,6 @@ from collections.abc import Iterable, Sequence
 from typing import List
 
 class UserBase(BaseModel):
-    id: int | None = None
     first_name : str | None = Field(None, min_length=2, max_length=50)
     last_name : str | None = Field(None, min_length=2, max_length=50)
     email : EmailStr | None = Field(
@@ -21,7 +20,7 @@ class UserBase(BaseModel):
     password: str | None = Field(
         None, 
         min_length=8, 
-        max_length=100, 
+        max_length=50, 
         description="Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one number."
     )
     hashed_password: str | None = None
@@ -56,10 +55,11 @@ class UserCreate(UserBase):
     pass
 
 class UserDelete(UserBase):
-    pass
+    id: int 
 
 
 class User(UserBase):
+    
     __config__ = {
         "from_attributes": True,
         "allow_population_by_field_name": True,
