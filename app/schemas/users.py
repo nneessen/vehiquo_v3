@@ -65,6 +65,22 @@ class User(UserBase):
         "allow_population_by_field_name": True,
         "arbitrary_types_allowed": True,
         }
-    
+
+
+class UserLogin(UserBase):
+    username : str | None = Field(
+        None, 
+        min_length=5, 
+        max_length=25, 
+        description="Username must be between 5 and 25 characters and can only contain letters, numbers, underscores, and dashes."
+    )
+    password: str | None = Field(
+        None, 
+        min_length=8, 
+        max_length=50, 
+        description="Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one number."
+    )
+
+
 class ListUserResponse(BaseModel):
     users: List[User]

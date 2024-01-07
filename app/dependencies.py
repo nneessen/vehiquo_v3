@@ -28,7 +28,15 @@ def get_db():
     
     
 async def get_token_header(x_token: str = Header(...)):
-    ''' Exemplo of header validation dependency '''
+    """ 
+    Get token from header
+    
+    Args:
+        x_token (str): Token from header
+    
+    Raises:
+        HTTPException: If token is invalid
+    """
     payload = decode(x_token)
     username: str = payload.get("email")
     if username == None:
@@ -36,7 +44,15 @@ async def get_token_header(x_token: str = Header(...)):
 
 
 async def get_query_token(token: str):
-    ''' Exemplo of header validation dependency '''
+    """
+    Get token from query
+    
+    Args:
+        token (str): Token from query
+    
+    Raises:
+        HTTPException: If token is invalid
+    """
     if token != "jessica":
         raise HTTPException(status_code=400, detail="No Jessica token provided")
 
