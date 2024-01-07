@@ -14,6 +14,9 @@ from app.config import API_PREFIX, ALLOWED_HOSTS
 
 from app.routers.handlers.http_error import http_error_handler
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def get_application() -> FastAPI:

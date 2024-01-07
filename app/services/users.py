@@ -138,3 +138,19 @@ def deactivate_user(db: Session, user_id: int) -> models.User:
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def authenticate(db: Session, *, username: str, password: str) -> Optional[models.User]:
+    """
+    Authenticate a user
+    @param db: SQLAlchemy database session
+    @param username: Username of the user to authenticate
+    @param password: Password of the user to authenticate
+    @return: The authenticated user
+    """
+    user = get_user_by_username(db, username=username)
+    if not user:
+        return None
+    if not verify_password(password, user.hashed_password):
+        return None
+    return user
