@@ -23,15 +23,6 @@ class UserBase(BaseModel):
         max_length=50, 
         description="Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one number."
     )
-    hashed_password: str | None = None
-    confirmed : bool | None = False
-    phone_number : str | None = None
-    twilio_opt_in : bool | None = False
-    is_blocked : bool | None = False
-    is_active : bool | None = False
-    is_buyer: bool | None = False
-    is_admin : bool | None = False
-    is_superuser : bool | None = False
 
 
 class UserOutput(BaseModel):
@@ -57,6 +48,8 @@ class UserCreate(UserBase):
 class UserDelete(UserBase):
     id: int 
 
+class UserInDB(UserBase):
+    hashed_password: str
 
 class User(UserBase):
     
