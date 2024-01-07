@@ -7,7 +7,8 @@ from fastapi import Header, HTTPException
 from app.database import SessionLocal
 
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
+# SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = "secret"
 ALGORITHM = "HS256"
 
 

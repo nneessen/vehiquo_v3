@@ -48,6 +48,8 @@ class UserCreate(UserBase):
 class UserDelete(UserBase):
     id: int 
 
+class UserInDB(UserBase):
+    hashed_password: str
 
 class User(UserBase):
     
