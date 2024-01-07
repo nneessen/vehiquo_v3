@@ -7,15 +7,9 @@ from sqlalchemy import select, and_
 T = TypeVar("T")
 
 class SqlRepositoryBase(Generic[T], ABC):
+
     @abstractmethod
     def get(self, id: int) -> Optional[T]:
-        """
-        Get a single entity by id
-        Args:
-            id (int): id of the entity
-        Returns:
-            Optional[T]: the entity if found, None otherwise
-        """
         raise NotImplementedError()
 
     @abstractmethod
