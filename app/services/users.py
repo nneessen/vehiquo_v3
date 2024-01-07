@@ -154,3 +154,11 @@ def authenticate(db: Session, *, username: str, password: str) -> Optional[model
     if not verify_password(password, user.hashed_password):
         return None
     return user
+
+def is_active(user: models.User) -> bool:
+    """
+    Check if a user is active
+    @param user: User to check
+    @return: True if the user is active, False otherwise
+    """
+    return user.is_active

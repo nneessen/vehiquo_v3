@@ -1,4 +1,8 @@
+from typing import Any, Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, status
+
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
 
@@ -7,6 +11,7 @@ from app.dependencies import get_db
 from app.schemas import users as schemas
 from app.services import users as services
 from app.unit_of_work.unit_of_work import UnitOfWork
+
 
 router = APIRouter(tags=["Users"])
 
@@ -54,3 +59,5 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
+
+
