@@ -1,12 +1,15 @@
+import os
+import jwt
+import secrets
+
 from fastapi import Header, HTTPException
 
 from app.database import SessionLocal
 
-import jwt
 
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
-
+SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = "HS256"
+
 
 def decode(token):
     striped_token = token.replace("Bearer ", "")
@@ -36,3 +39,7 @@ async def get_query_token(token: str):
     ''' Exemplo of header validation dependency '''
     if token != "jessica":
         raise HTTPException(status_code=400, detail="No Jessica token provided")
+
+
+def generate_secret_key():
+    return secrets.token_hex(32)
