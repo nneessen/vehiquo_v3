@@ -10,4 +10,4 @@ class Token(BaseModel):
     
 
 class TokenData(BaseModel):
-    sub: Optional[int] = None
+    username: str | None = None
