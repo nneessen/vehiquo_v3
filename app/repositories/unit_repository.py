@@ -9,6 +9,7 @@ from sqlalchemy import (
     )
 from app.sql_repository import SqlRepository
 from app.models.units import Unit
+from app.schemas import units as schemas
 
 
 class UnitRepositoryBase(SqlRepository[Unit], ABC):
@@ -132,10 +133,40 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
         return self.db.query(Unit).offset(skip).limit(limit).all()
     
     def auto_expire_units(self) -> None:
-        units = self.db.query(Unit).filter(Unit.purchased == False).all()
-        updated_units = []
+        units = self.db.query(Unit).filter(Unit.purchased==False).all()
         for unit in units:
-            if datetime.utcnow() > unit.expire_date:
+            if unit.expire_date < datetime.utcnow():
                 unit.is_expired = True
-                updated_units.append(unit)
-    #TODO - create ExpiredUnit Schema
+                self.db.commit()
+                self.db.refresh(unit)
+
+    def get_units_listed_by_month(self, retail: str | None = None, wholesale: str | None = None) -> None:
+        months = ("January", "February", "March", "April", "May", "June", "July","August", "September", "October", "November", "December")
+        units_by_month = []
+        if retail is None and wholesale is None:
+            for month in months:
+                units = self.db.query(Unit).filter(func.month(Unit.list_date) == months.index(month)+1).all()
+                units_by_month.append({'month': month, 'units listed': units})
+        elif retail is not None and wholesale is None:
+            for month in months:
+                units = self.db.query(Unit).filter(func.month(Unit.list_date) == months.index(month)+1, Unit.retailWholesale == "Retail").all()
+                units_by_month.append({'month': month, 'units listed': units})
+        elif retail is None and wholesale is not None:
+            for month in months:
+                units = self.db.query(Unit).filter(func.month(Unit.list_date) == months.index(month)+1, Unit.retailWholesale == "Wholesale").all()
+                units_by_month.append({'month': month, 'units listed': units})
+        else:
+            for month in months:
+                units = self.db.query(Unit).filter(func.month(Unit.list_date) == months.index(month)+1, Unit.retailWholesale == "Retail").all()
+                units_by_month.append({'month': month, 'units listed': units})
+                units = self.db.query(Unit).filter(func.month(Unit.list_date) == months.index(month)+1, Unit.retailWholesale == "Wholesale").all()
+                units_by_month.append({'month': month, 'units listed': units})
+        return units_by_month
+
+    def get_unsold_units_count(self) -> None:
+        return self.db.query(func.count(Unit.id)).filter(and_(Unit.purchased==False), Unit.is_expired==False).scalar()
+    
+    def get_last_added_unit(self) -> None:
+        return self.db.query(Unit).order_by(Unit.id.desc()).first()
+    
+    
