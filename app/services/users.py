@@ -1,11 +1,13 @@
 import bcrypt
+import os
 
+from jose import jwt, JWTError
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models import users as models
 from app.schemas import users as schemas
-
+from app.config import ALGORITHM
     
     
 def hash_password(password: str) -> str:
@@ -162,3 +164,21 @@ def is_active(user: models.User) -> bool:
     @return: True if the user is active, False otherwise
     """
     return user.is_active
+
+
+def get_current_user(db: Session, *, token: str) -> Optional[models.User]:
+    """
+    Get the current user
+    @param db: SQLAlchemy database session
+    @param token: Token of the current user
+    @return: The current user
+    """
+    try:
+        payload = jwt.decode(token, os.environ.get("SECRET_KEY"), algorithms=[ALGORITHM])
+        token_data = schemas.TokenPayload(**payload)
+    except JWTError:
+        raise HTTPException(status_code=403, detail="Could not validate credentials")
+    user = get_user(db, user_id=token_data.sub)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user

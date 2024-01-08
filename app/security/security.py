@@ -1,16 +1,15 @@
 import os
 import jwt
+from jose import JWTError
 from datetime import datetime, timedelta
 from typing import Any, Union
 
 from passlib.context import CryptContext
-
+from app.config import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 def create_access_token(
     subject: Union[str, Any], expires_delta: timedelta = None) -> str:

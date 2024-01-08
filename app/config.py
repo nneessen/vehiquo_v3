@@ -15,6 +15,7 @@ config = Config(".env")
 ROUTE_PREFIX_V1 = "/v1"
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ALGORITHM = "HS256"
 
 ALLOWED_HOSTS: List[str] = config(
     "ALLOWED_HOSTS",
