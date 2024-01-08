@@ -28,6 +28,8 @@ router = APIRouter(prefix="/units", tags=["Units"])
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=units_schema.UnitOutput)
 def create_unit(unit: units_schema.UnitAdd, vehicle: vehicles_schema.VehicleAdd, db: Session = Depends(get_db)) -> units_schema.UnitOutput:
     db_unit = unit_service.create_unit(db, unit=unit, vehicle=vehicle)
+    if db_unit is None:
+        raise HTTPException(status_code=404, detail="Unit not found")
     return {"Status": "Success", "Unit": db_unit}
 
 
