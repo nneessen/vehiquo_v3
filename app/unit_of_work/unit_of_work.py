@@ -7,6 +7,9 @@ from sqlalchemy import select, and_
 
 from app.logging_config import setup_logging
 from app.repositories.user_repository import UserRepositoryBase, UserRepository
+from app.repositories.vehicle_repository import VehicleRepositoryBase, VehicleRepository
+from app.repositories.unit_repository import UnitRepositoryBase, UnitRepository
+
 
 
 setup_logging()
@@ -15,6 +18,9 @@ logger = logging.getLogger(__name__)
 
 class UnitOfWorkBase(ABC):
     users: UserRepositoryBase
+    units: UnitRepositoryBase
+    vehicles: VehicleRepositoryBase
+    
     
     def __enter__(self):
         return self
@@ -40,6 +46,8 @@ class UnitOfWork(UnitOfWorkBase):
     def __enter__(self):
         self.db = Session()
         self.users = UserRepository(self.db)
+        self.units = UnitRepository(self.db)
+        self.vehicles = VehicleRepository(self.db)
         return super().__enter__()
     
     def commit(self):
