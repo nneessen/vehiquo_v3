@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 
 
 class UnitBase(BaseModel):
-    id: int | None = None
     list_date: datetime | None = datetime.utcnow()
     expire_date: datetime | None = datetime.utcnow() + timedelta(hours=24)
     buy_now_price: int | None = Field(None, ge=0)
