@@ -19,6 +19,10 @@ class SqlRepositoryBase(Generic[T], ABC):
     @abstractmethod
     def add(self, entity: T) -> T:
         raise NotImplementedError()
+    
+    @abstractmethod
+    def add_all(self, entities: List[T]) -> List[T]:
+        raise NotImplementedError()
 
     @abstractmethod
     def update(self, entity: T) -> T:
@@ -39,6 +43,9 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
     
     def get(self, id: int) -> Optional[T]:
         return self.db.execute(self.construct_get_stmt(id)).scalar_one_or_none()
+    
+    def get_all(self) -> List[T]:
+        return self.db.execute(select(self.model)).scalars().all()
 
     def construct_list_stmt(self, **filters):
         stmt = select(self.model)
@@ -61,6 +68,11 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
         self.db.commit()
         self.db.refresh(entity)
         return entity
+    
+    def add_all(self, entities: List[T]) -> List[T]:
+        self.db.add_all(entities)
+        self.db.commit()
+        return entities
     
     def update(self, entity: T) -> T:
         self.db.add(entity)

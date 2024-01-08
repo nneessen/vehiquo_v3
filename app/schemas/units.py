@@ -52,8 +52,11 @@ class UnitOutput(UnitBase):
 
 
 class Unit(UnitBase):
+    vehicle_id: int
+    
     __config__ = {
         "from_attributes": True,
         "allow_population_by_field_name": True,
         "arbitrary_types_allowed": True,
+        "orm_mode": True,
         }

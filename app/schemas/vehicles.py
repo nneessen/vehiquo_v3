@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 
 class VehicleBase(BaseModel):
-    year: int | None = Field(None, ge=2000, le=2024, min_length=4, max_length=4)
+    year: int | None = Field(None, ge=2000, le=2024)
     make: str | None = Field(None, max_length=50)
     model: str | None = Field(None, max_length=50)
     trim: str | None = Field(None, max_length=50)
@@ -26,13 +26,12 @@ class VehicleAdd(VehicleBase):
     pass
 
 class VehicleUpdate(VehicleBase):
-    id : int
+    pass
 
 class VehicleDelete(VehicleBase):
-    id : int
+    pass
 
 class VehicleOutput(VehicleBase):
-    id : int
     units: List[Optional[int]] = []
 
 class Vehicle(VehicleBase):

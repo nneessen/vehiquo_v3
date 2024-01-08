@@ -21,14 +21,14 @@ class UnitOfWorkBase(ABC):
     units: UnitRepositoryBase
     vehicles: VehicleRepositoryBase
     
-    
     def __enter__(self):
         return self
     
-    def __exit__(self, exc_type, exc_value, traceback):
-        if exc_type:
-            logger.error(f"Error: {exc_value}")
-        self.rollback()
+    def __exit__(self, exn_type, exn_value, traceback):
+        if exn_type is None:
+            self.commit()
+        else:
+            self.rollback()
         
     @abstractmethod
     def commit(self):
@@ -49,6 +49,10 @@ class UnitOfWork(UnitOfWorkBase):
         self.units = UnitRepository(self.db)
         self.vehicles = VehicleRepository(self.db)
         return super().__enter__()
+    
+    def __exit__(self, *args):
+        super().__exit__(*args)
+        self.db.close()
     
     def commit(self):
         self.db.commit()
