@@ -33,8 +33,8 @@ def test_create_user(client: TestClient, db: Session) -> None:
     user.store_id = 1
     db.commit()
     db.refresh(user)
-    
     assert user_data["email"] == user_in["email"]
+    assert user.store_id == 1
     
     
 def test_create_same_user_multiple_times(client: TestClient, db: Session) -> None:
