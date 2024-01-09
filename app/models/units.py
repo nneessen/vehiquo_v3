@@ -44,6 +44,7 @@ class Unit(Base):
     delivery_status = Column(String, nullable=True, default="N/A")
     buy_fee = Column(Integer, nullable=True, default=250)
     
+    store_id = Column(Integer, ForeignKey("stores.id"))
     vehicle_id = Column(Integer, ForeignKey("vehicles.id"))
     purchased_by = Column(Integer, ForeignKey("users.id"))
     added_by = Column(Integer, ForeignKey("users.id"))

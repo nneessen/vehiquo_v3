@@ -11,8 +11,6 @@ class StoreBase(BaseModel):
     admin_clerk_1: str | None = Field(None, max_length=50, description="Admin Clerk 1")
     is_primary_hub: bool | None = Field(None)
     qb_customer_id: int | None = Field(None)
-    # autogroup_id: int | None = Field(None)
-    # cluster_id: int | None = Field(None)
 
 
 class StoreAdd(StoreBase):
@@ -28,19 +26,12 @@ class StoreDelete(StoreBase):
 
 
 class StoreOutput(StoreBase):
-    id: int | None = None
-    # autogroup_id: int | None = None
-    # cluster_id: int | None = None
-
-
-class StoreInDB(StoreOutput):
-    id: int
-    # autogroup_id: int
-    # cluster_id: int
+    pass
 
 
 class Store(StoreBase):
-    id: int
+    unit_id: int
+    user_id: int
     # autogroup_id: int
     # cluster_id: int
 

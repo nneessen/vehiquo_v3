@@ -50,6 +50,7 @@ class UnitOutput(UnitBase):
 
 
 class Unit(UnitBase):
+    store_id: int
     vehicle_id: int
     
     __config__ = {
