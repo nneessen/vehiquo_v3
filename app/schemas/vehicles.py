@@ -12,6 +12,11 @@ class VehicleBase(BaseModel):
     vin: str | None = Field(None, max_length=17)
     mileage: int | None = Field(None, ge=0)
     color: str | None = Field(None, max_length=50)
+    
+    class Config:
+        from_attributes = True
+        arbitrary_types_allowed = True
+        populate_by_name = True
 
     
 class VehicleAdd(VehicleBase):
@@ -36,22 +41,7 @@ class VehicleDelete(VehicleBase):
 
 class VehicleOutput(VehicleBase):
     id: int | None = None
-    class Config:
-        from_attributes = True
-        orm_mode = True
-        arbitrary_types_allowed = True
-        allow_population_by_field_name = True
-        json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            timedelta: lambda v: v.total_seconds(),
-        }
-
-
 
 
 class Vehicle(VehicleBase):
-    __config__ = {
-        "from_attributes": True,
-        "populate_by_name": True,
-        "arbitrary_types_allowed": True,
-    }
+    pass

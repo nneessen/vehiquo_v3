@@ -9,7 +9,15 @@ class UnitBase(BaseModel):
     buy_now_price: int | None = Field(None, ge=0)
     added_by: int | None = 2
     zip_code_loc: int | None = 60610
-
+    
+    class Config:
+        from_attributes = True
+        arbitrary_types_allowed = True
+        populate_by_name = True
+        json_encoders = {
+            datetime: lambda dt: dt.isoformat(),
+            timedelta: lambda td: td.total_seconds(),
+        }
 
 class UnitAdd(UnitBase):
     store_id: int | None = Field(1, description="Default store ID is 1.")
@@ -53,23 +61,9 @@ class UnitOutput(UnitBase):
 
     vehicle: vehicles_schema.VehicleOutput | None = None
     
-    class Config:
-        from_attributes = True
-        orm_mode = True
-        arbitrary_types_allowed = True
-        populate_by_name = True
-        json_encoders = {
-            datetime: lambda v: v.isoformat(),
-        }
 
-
+        
 
 class Unit(UnitBase):
     store_id: int
     vehicle_id: int
-    
-    __config__ = {
-        "from_attributes": True,
-        "allow_population_by_field_name": True,
-        "arbitrary_types_allowed": True,
-        }
