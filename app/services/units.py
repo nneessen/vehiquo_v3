@@ -1,6 +1,8 @@
+import time
+
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
+from fastapi import HTTPException, BackgroundTasks
 from datetime import datetime
 
 from app.models import units as unit_model
@@ -33,7 +35,7 @@ def get_units(db: Session, skip: int = 0, limit: int = 100) -> List[unit_model.U
 
 
 def create_unit(db: Session, unit: unit_schema.UnitAdd, vehicle: vehicle_schema.VehicleAdd) -> unit_model.Unit:
-    """
+    """✅
     Create a new unit
     @param db: SQLAlchemy database session
     @param unit: Unit to create
@@ -51,33 +53,53 @@ def create_unit(db: Session, unit: unit_schema.UnitAdd, vehicle: vehicle_schema.
     except Exception as e:
         db.rollback()
         raise e
-    
-
 
 def delete_unit(db: Session, unit_id: int) -> unit_model.Unit:
-    """
+    """✅
     Delete a unit by ID
     @param db: SQLAlchemy database session
     @param unit_id: ID of the unit to delete
     @return: The deleted unit
     """
     db_unit = db.query(unit_model.Unit).filter(unit_model.Unit.id == unit_id).first()
+    vehicle = db.query(vehicle_model.Vehicle).filter(vehicle_model.Vehicle.id == db_unit.vehicle_id).first()
+
+    if db_unit is None:
+        raise HTTPException(status_code=404, detail="Unit not found")
+
+    if vehicle is None:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+
+    db.delete(vehicle)
     db.delete(db_unit)
     db.commit()
     return db_unit
 
 
-def expire_unit(db: Session, unit_id: int) -> unit_model.Unit:
+def expire_units(db: Session) -> bool:
     """
-    Expire a unit by ID
+    Expire units that have passed their expiration date.
     @param db: SQLAlchemy database session
-    @param unit_id: ID of the unit to expire
-    @return: The expired unit
+    @return: True if any units were expired, False otherwise
     """
-    db_unit = db.query(unit_model.Unit).filter(unit_model.Unit.id == unit_id).first()
-    db_unit.expire_date = datetime.utcnow()
+    db_units = db.query(unit_model.Unit).filter(unit_model.Unit.expire_date <= datetime.utcnow()).all()
+    if not db_units:
+        return False
+
+    for db_unit in db_units:
+        db_unit.is_expired = True
+
     db.commit()
-    return db_unit
+    return True
+
+
+
+def check_and_expire_units(db: Session) -> None:
+    while True:
+        expire_units(db)
+        time.sleep(60*15)
+
+
 
 
 def update_unit(db: Session, unit: unit_schema.UnitUpdate) -> unit_model.Unit:

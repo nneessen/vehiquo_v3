@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from sqlalchemy import (
     Boolean,
     Column,
@@ -20,7 +21,7 @@ class Unit(Base):
     purchase_date = Column(DateTime, nullable=True)
     list_date = Column(DateTime, nullable=True)
     sold_date = Column(DateTime, nullable=True)
-    expire_date = Column(DateTime, nullable=True)
+    expire_date = Column(DateTime, nullable=True, default=datetime.utcnow() + timedelta(minutes=1))
     purchase_price = Column(Integer, nullable=True, default=0)
     buy_now_price = Column(Integer, nullable=True, default=0)
     vehicle_age = Column(Integer, nullable=True, default=0)

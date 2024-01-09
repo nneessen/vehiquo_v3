@@ -1,6 +1,6 @@
 from typing import Any, Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
@@ -33,6 +33,8 @@ def create_unit(unit: units_schema.UnitAdd, vehicle: vehicles_schema.VehicleAdd,
     return {"Status": "Success", "Unit": db_unit}
 
 
+
+#⚠️ need to work on this function
 @router.get("/", status_code=status.HTTP_200_OK, response_model=list[units_schema.UnitOutput])
 def get_units(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> list[units_schema.UnitOutput]:
     units = unit_service.get_units(db, skip=skip, limit=limit)
@@ -62,3 +64,8 @@ def delete_unit(unit_id: int, db: Session = Depends(get_db)) -> units_schema.Uni
         except Exception as e:
             uow.rollback()
             raise e
+        
+@router.post("/expire_units", status_code=status.HTTP_200_OK)
+async def expire_units(background_tasks: BackgroundTasks, db: Session = Depends(get_db)) -> Any:
+    background_tasks.add_task(unit_service.check_and_expire_units, db)
+    return {"Status": "Success", "Message": "Expire units task added to background tasks."}
