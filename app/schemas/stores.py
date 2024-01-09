@@ -13,7 +13,7 @@ class StoreBase(BaseModel):
     qb_customer_id: int | None = Field(None)
 
 
-class StoreAdd(StoreBase):
+class StoreCreate(StoreBase):
     pass
 
 

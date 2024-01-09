@@ -27,7 +27,7 @@ router = APIRouter(prefix="/stores", tags=["Stores"])
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=stores_schema.StoreOutput)
-def create_store(store: stores_schema.StoreAdd, db: Session = Depends(get_db)) -> stores_schema.StoreOutput:
+def create_store(store: stores_schema.StoreCreate, db: Session = Depends(get_db)) -> stores_schema.StoreOutput:
     db_store = store_service.create_store(db, store=store)
     if db_store is None:
         raise HTTPException(status_code=404, detail="Store not found")

@@ -2,7 +2,6 @@ import random
 import string
 from typing import Dict
 
-from fastapi.testclient import TestClient
 
 
 def random_lower_string() -> str:
@@ -21,6 +20,9 @@ def random_password() -> str:
     return random_lower_string()
 
 
+
+
+
 def random_user_create() -> Dict:
     return {
         "first_name": random_lower_string(),
@@ -30,8 +32,7 @@ def random_user_create() -> Dict:
         "password": random_lower_string(),
         "phone_number": random_phone_number(),
     }
-    
-    
+     
 random_user_data = random_user_create()
 
 
@@ -43,5 +44,6 @@ def create_me() -> Dict:
         "username": "nneessen",
         "password": "password",
         "phone_number": "8594335907",
+        "is_admin": True,
     }
 

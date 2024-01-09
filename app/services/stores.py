@@ -34,7 +34,7 @@ def get_stores(db: Session, skip: int = 0, limit: int = 100) -> list[store_model
     return db.query(store_model.Store).offset(skip).limit(limit).all()
 
 
-def create_store(db: Session, store: store_schema.StoreAdd) -> store_model.Store:
+def create_store(db: Session, store: store_schema.StoreCreate) -> store_model.Store:
     """✅
     Create a new store
     @param db: SQLAlchemy database session
@@ -43,6 +43,9 @@ def create_store(db: Session, store: store_schema.StoreAdd) -> store_model.Store
     """
     try:
         db_store = store_model.Store(**store.model_dump())
+        if store.name in [s.name for s in get_stores(db)]:
+            raise HTTPException(status_code=409, detail="Store name already exists")
+        
         db.add(db_store)
         db.commit()
         db.refresh(db_store)
