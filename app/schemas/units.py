@@ -1,6 +1,4 @@
 from pydantic import BaseModel, Field
-from collections.abc import Iterable, Sequence
-from typing import List
 from datetime import datetime, timedelta
 
 

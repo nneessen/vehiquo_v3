@@ -52,7 +52,8 @@ class UserInDB(UserBase):
     hashed_password: str
 
 class User(UserBase):
-    
+    store_id: int
+
     __config__ = {
         "from_attributes": True,
         "allow_population_by_field_name": True,

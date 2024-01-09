@@ -1,8 +1,8 @@
 import time
 
-from typing import List, Optional
+from typing import Optional, List
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, BackgroundTasks
+from fastapi import HTTPException
 from datetime import datetime
 
 from app.models import units as unit_model
@@ -11,7 +11,6 @@ from app.models import vehicles as vehicle_model
 from app.schemas import units as unit_schema
 from app.schemas import vehicles as vehicle_schema
 
-from app.unit_of_work.unit_of_work import UnitOfWork
 
 def get_unit_by_id(db: Session, unit_id: int) -> Optional[unit_model.Unit]:
     """
@@ -33,6 +32,17 @@ def get_units(db: Session, skip: int = 0, limit: int = 100) -> List[unit_model.U
     """
     return db.query(unit_model.Unit).offset(skip).limit(limit).all()
 
+
+def get_store_units(db: Session, store_id: int, skip: int = 0, limit: int = 100) -> List[unit_model.Unit]:
+    """
+    Get all units for a store
+    @param db: SQLAlchemy database session
+    @param store_id: ID of the store to get units for
+    @param skip: Number of units to skip
+    @param limit: Maximum number of units to return
+    @return: A list of units
+    """
+    return db.query(unit_model.Unit).filter(unit_model.Unit.store_id == store_id).offset(skip).limit(limit).all()
 
 def create_unit(db: Session, unit: unit_schema.UnitAdd, vehicle: vehicle_schema.VehicleAdd) -> unit_model.Unit:
     """✅

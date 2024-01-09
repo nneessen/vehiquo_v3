@@ -22,3 +22,5 @@ class User(Base):
     is_blocked = Column(Boolean, default=False)
     is_admin = Column(Boolean, default=False)
     is_superuser = Column(Boolean, default=False)
+    
+    store_id = Column(Integer, ForeignKey("stores.id"))

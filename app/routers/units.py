@@ -35,8 +35,8 @@ def create_unit(unit: units_schema.UnitAdd, vehicle: vehicles_schema.VehicleAdd,
 
 
 #⚠️ need to work on this function
-@router.get("/", status_code=status.HTTP_200_OK, response_model=list[units_schema.UnitOutput])
-def get_units(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> list[units_schema.UnitOutput]:
+@router.get("/", status_code=status.HTTP_200_OK, response_model=units_schema.UnitOutput)
+def get_units(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> units_schema.UnitOutput:
     units = unit_service.get_units(db, skip=skip, limit=limit)
     return {"Status": "Success", "Units": units}
 
