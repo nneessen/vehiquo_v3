@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
-from collections.abc import Iterable, Sequence
 from typing import List
 
 class UserBase(BaseModel):
@@ -23,10 +22,13 @@ class UserBase(BaseModel):
         max_length=50, 
         description="Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one number."
     )
-    model_config: ConfigDict = {
-        "from_attributes": True,
-        "populate_by_name": True,
-    }
+
+    model_config: ConfigDict = ConfigDict(
+        from_attributes=True, 
+        populate_by_name=True,
+        extra="ignore"
+    )
+
 
 class UserOutput(BaseModel):
     first_name : str | None = Field(None, min_length=2, max_length=50)
@@ -53,11 +55,14 @@ class UserCreate(UserBase):
     is_blocked: bool = False
     store_id: int | None = Field(None, description="The ID of the store the user belongs to.")
 
+
 class UserDelete(UserBase):
     id: int 
 
+
 class UserInDB(UserBase):
     hashed_password: str
+
 
 class User(UserBase):
     store_id: int

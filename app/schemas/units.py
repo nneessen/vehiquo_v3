@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional
 from datetime import datetime, timedelta
 from app.schemas import vehicles as vehicles_schema
 
@@ -10,10 +9,12 @@ class UnitBase(BaseModel):
     added_by: int | None = 2
     zip_code_loc: int | None = 60610
     
-    model_config: ConfigDict = {
-        "from_attributes": True,
-        "populate_by_name": True,
-    }
+    model_config: ConfigDict = ConfigDict(
+        from_attributes=True, 
+        populate_by_name=True,
+        extra="ignore",
+        json_encoders={datetime: lambda v: v.isoformat()},
+    )
 
 class UnitAdd(UnitBase):
     store_id: int | None = Field(1, description="Default store ID is 1.")

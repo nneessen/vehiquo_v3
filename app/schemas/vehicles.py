@@ -1,7 +1,4 @@
 from pydantic import BaseModel, Field, ConfigDict
-from collections.abc import Iterable, Sequence
-from typing import List, Optional, Annotated
-from datetime import datetime, timedelta
 
 
 class VehicleBase(BaseModel):
@@ -13,10 +10,11 @@ class VehicleBase(BaseModel):
     mileage: int | None = Field(None, ge=0)
     color: str | None = Field(None, max_length=50)
     
-    model_config: ConfigDict = {
-        "from_attributes": True,
-        "populate_by_name": True,
-    }
+    model_config: ConfigDict = ConfigDict(
+        from_attributes=True, 
+        populate_by_name=True,
+        extra="ignore"
+    )
 
     
 class VehicleAdd(VehicleBase):
@@ -31,7 +29,7 @@ class VehicleAdd(VehicleBase):
     msrp: int | None = Field(None, ge=0)
 
 
-class VehicleUpdate(VehicleBase):
+class VehicleUpdate(VehicleBase, validate_assignment=True):
     pass
 
 

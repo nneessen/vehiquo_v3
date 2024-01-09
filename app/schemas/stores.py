@@ -12,10 +12,11 @@ class StoreBase(BaseModel):
     is_primary_hub: bool | None = Field(None)
     qb_customer_id: int | None = Field(None)
 
-    model_config: ConfigDict = {
-        "from_attributes": True,
-        "populate_by_name": True,
-    }
+    model_config: ConfigDict = ConfigDict(
+        from_attributes=True, 
+        populate_by_name=True,
+        extra="ignore"
+    )
 
 class StoreCreate(StoreBase):
     pass
