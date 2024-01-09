@@ -43,7 +43,12 @@ class UserOutput(BaseModel):
     phone_number : str | None = None
 
 class UserCreate(UserBase):
-    pass
+    is_active: bool = True
+    is_buyer: bool = False
+    is_admin: bool = False
+    is_superuser: bool = False
+    is_blocked: bool = False
+    store_id: int | None = Field(None, description="The ID of the store the user belongs to.")
 
 class UserDelete(UserBase):
     id: int 

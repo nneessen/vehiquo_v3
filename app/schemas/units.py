@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 from datetime import datetime, timedelta
-
+from app.schemas import vehicles as vehicles_schema
 
 class UnitBase(BaseModel):
     list_date: datetime | None = datetime.utcnow()
@@ -11,7 +12,8 @@ class UnitBase(BaseModel):
 
 
 class UnitAdd(UnitBase):
-    pass
+    store_id: int | None = Field(1, description="Default store ID is 1.")
+
 
 class UnitUpdate(UnitBase):
     pass
@@ -23,6 +25,7 @@ class UnitExpire(UnitBase):
     pass
     
 class UnitOutput(UnitBase):
+    id: int | None = None
     stock_number: str | None = None
     purchase_date: datetime | None = None
     sold_date: datetime | None = None
@@ -48,6 +51,18 @@ class UnitOutput(UnitBase):
     purchased_by: int | None = None
     added_by: int | None = None
 
+    vehicle: vehicles_schema.VehicleOutput | None = None
+    
+    class Config:
+        from_attributes = True
+        orm_mode = True
+        arbitrary_types_allowed = True
+        populate_by_name = True
+        json_encoders = {
+            datetime: lambda v: v.isoformat(),
+        }
+
+
 
 class Unit(UnitBase):
     store_id: int
@@ -57,5 +72,4 @@ class Unit(UnitBase):
         "from_attributes": True,
         "allow_population_by_field_name": True,
         "arbitrary_types_allowed": True,
-        "orm_mode": True,
         }

@@ -12,6 +12,9 @@ class VehicleBase(BaseModel):
     vin: str | None = Field(None, max_length=17)
     mileage: int | None = Field(None, ge=0)
     color: str | None = Field(None, max_length=50)
+
+    
+class VehicleAdd(VehicleBase):
     drivetrain: str | None = Field(None, max_length=50)
     transmission: str | None = Field(None, max_length=50)
     transmission_type: str | None = Field(None, max_length=50)
@@ -21,22 +24,34 @@ class VehicleBase(BaseModel):
     engine_cylinders: int | None = Field(None, ge=0)
     category: str | None = Field(None, max_length=50)
     msrp: int | None = Field(None, ge=0)
-    
-class VehicleAdd(VehicleBase):
-    pass
+
 
 class VehicleUpdate(VehicleBase):
     pass
 
+
 class VehicleDelete(VehicleBase):
     pass
 
+
 class VehicleOutput(VehicleBase):
-    units: List[Optional[int]] = []
+    id: int | None = None
+    class Config:
+        from_attributes = True
+        orm_mode = True
+        arbitrary_types_allowed = True
+        allow_population_by_field_name = True
+        json_encoders = {
+            datetime: lambda v: v.isoformat(),
+            timedelta: lambda v: v.total_seconds(),
+        }
+
+
+
 
 class Vehicle(VehicleBase):
     __config__ = {
         "from_attributes": True,
-        "allow_population_by_field_name": True,
+        "populate_by_name": True,
         "arbitrary_types_allowed": True,
     }

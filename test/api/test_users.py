@@ -11,11 +11,11 @@ from test.utils.data_randomizer import random_user_create, create_me
 
 
     
-def create_me_as_admin(client: TestClient, db: Session) -> None:
-    me = create_me()
-    user_in = dict(UserCreate(**me))
-    r = client.post("/api/v1/users/", json=user_in)
-    assert 200 <= r.status_code < 300
+# def create_me_as_admin(client: TestClient) -> None:
+#     me = create_me()
+#     user_in = dict(UserCreate(**me))
+#     r = client.post("/api/v1/users/", json=user_in)
+#     assert 200 <= r.status_code < 300
 
 
 def test_create_user(client: TestClient, db: Session) -> None:
@@ -37,7 +37,7 @@ def test_create_user(client: TestClient, db: Session) -> None:
     assert user.store_id == 1
     
 
-def test_create_user_with_existing_email(client: TestClient, db: Session) -> None:
+def test_create_user_with_existing_email(client: TestClient) -> None:
     """
     GIVEN a FastAPI application
     WHEN the POST endpoint '/api/v1/users/' is requested and email already exists
@@ -54,3 +54,11 @@ def test_create_user_with_existing_email(client: TestClient, db: Session) -> Non
     user_in = dict(UserCreate(**user_data))
     r = client.post("/api/v1/users/", json=user_in)
     assert r.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_assign_user_to_store(db: Session) -> None:
+    user = get_user_by_username(db, "admin")
+    user.store_id = 1
+    db.commit()
+    assert user.store_id == 1
+    assert user.is_admin == True

@@ -1,4 +1,4 @@
-from typing import Any, Annotated
+from typing import Any, Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 
@@ -24,7 +24,7 @@ from app.routers.users import get_current_user
 
 router = APIRouter(prefix="/units", tags=["Units"])
 
-
+#✅
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=units_schema.UnitOutput)
 def create_unit(unit: units_schema.UnitAdd, vehicle: vehicles_schema.VehicleAdd, db: Session = Depends(get_db)) -> units_schema.UnitOutput:
     db_unit = unit_service.create_unit(db, unit=unit, vehicle=vehicle)
@@ -35,10 +35,15 @@ def create_unit(unit: units_schema.UnitAdd, vehicle: vehicles_schema.VehicleAdd,
 
 
 #⚠️ need to work on this function
-@router.get("/", status_code=status.HTTP_200_OK, response_model=units_schema.UnitOutput)
-def get_units(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> units_schema.UnitOutput:
-    units = unit_service.get_units(db, skip=skip, limit=limit)
-    return {"Status": "Success", "Units": units}
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[units_schema.UnitOutput])
+def get_units(db: Session = Depends(get_db)) -> units_schema.UnitOutput:
+    units = unit_service.get_units(db)
+    if not units:
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Units not found"
+            )
+    return units
 
 
 @router.get("/{unit_id}", status_code=status.HTTP_200_OK, response_model=units_schema.UnitOutput)

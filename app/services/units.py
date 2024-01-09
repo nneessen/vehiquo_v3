@@ -2,6 +2,7 @@ import time
 
 from typing import Optional, List
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
 from fastapi import HTTPException
 from datetime import datetime
 
@@ -22,7 +23,7 @@ def get_unit_by_id(db: Session, unit_id: int) -> Optional[unit_model.Unit]:
     return db.query(unit_model.Unit).filter(unit_model.Unit.id == unit_id).first()
 
 
-def get_units(db: Session, skip: int = 0, limit: int = 100) -> List[unit_model.Unit]:
+def get_units(db: Session, skip: int = 0, limit: int = 100) -> List[unit_schema.UnitOutput]:
     """
     Get all units
     @param db: SQLAlchemy database session
@@ -30,7 +31,14 @@ def get_units(db: Session, skip: int = 0, limit: int = 100) -> List[unit_model.U
     @param limit: Maximum number of units to return
     @return: A list of units
     """
-    return db.query(unit_model.Unit).offset(skip).limit(limit).all()
+    units = db.query(unit_model.Unit).offset(skip).limit(limit).all()
+    unit_outputs = []
+    for unit in units:
+        vehicle_data = vehicle_schema.VehicleOutput.from_orm(unit.vehicle) if unit.vehicle else None
+        unit_data = unit_schema.UnitOutput.from_orm(unit)
+        unit_data.vehicle = vehicle_data
+        unit_outputs.append(unit_data)
+    return unit_outputs
 
 
 def get_store_units(db: Session, store_id: int, skip: int = 0, limit: int = 100) -> List[unit_model.Unit]:
