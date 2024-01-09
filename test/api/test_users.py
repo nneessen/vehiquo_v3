@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.schemas.users import UserCreate
 from app.services.users import get_user_by_email, create_user, get_user_by_username, get_user
-from test.utils.data_randomizer import random_user_create, create_me
+from test.utils.user_randomizer import random_user_create, create_me
 
 
 

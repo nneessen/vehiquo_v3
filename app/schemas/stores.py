@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class StoreBase(BaseModel):
@@ -12,6 +12,10 @@ class StoreBase(BaseModel):
     is_primary_hub: bool | None = Field(None)
     qb_customer_id: int | None = Field(None)
 
+    model_config: ConfigDict = {
+        "from_attributes": True,
+        "populate_by_name": True,
+    }
 
 class StoreCreate(StoreBase):
     pass
@@ -34,10 +38,3 @@ class Store(StoreBase):
     user_id: int
     # autogroup_id: int
     # cluster_id: int
-
-    __config__ = {
-        "from_attributes": True,
-        "allow_population_by_field_name": True,
-        "arbitrary_types_allowed": True,
-        "orm_mode": True,
-    }

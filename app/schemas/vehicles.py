@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from collections.abc import Iterable, Sequence
 from typing import List, Optional, Annotated
 from datetime import datetime, timedelta
@@ -13,10 +13,10 @@ class VehicleBase(BaseModel):
     mileage: int | None = Field(None, ge=0)
     color: str | None = Field(None, max_length=50)
     
-    class Config:
-        from_attributes = True
-        arbitrary_types_allowed = True
-        populate_by_name = True
+    model_config: ConfigDict = {
+        "from_attributes": True,
+        "populate_by_name": True,
+    }
 
     
 class VehicleAdd(VehicleBase):

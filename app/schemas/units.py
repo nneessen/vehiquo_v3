@@ -1,23 +1,19 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime, timedelta
 from app.schemas import vehicles as vehicles_schema
 
 class UnitBase(BaseModel):
     list_date: datetime | None = datetime.utcnow()
-    expire_date: datetime | None = datetime.utcnow() + timedelta(hours=24)
+    expire_date: datetime | None = datetime.utcnow() + timedelta(minutes=5)
     buy_now_price: int | None = Field(None, ge=0)
     added_by: int | None = 2
     zip_code_loc: int | None = 60610
     
-    class Config:
-        from_attributes = True
-        arbitrary_types_allowed = True
-        populate_by_name = True
-        json_encoders = {
-            datetime: lambda dt: dt.isoformat(),
-            timedelta: lambda td: td.total_seconds(),
-        }
+    model_config: ConfigDict = {
+        "from_attributes": True,
+        "populate_by_name": True,
+    }
 
 class UnitAdd(UnitBase):
     store_id: int | None = Field(1, description="Default store ID is 1.")
