@@ -1,13 +1,21 @@
 import bcrypt
 import os
 
-from jose import jwt, JWTError
 from typing import List, Optional
+
+from jose import jwt, JWTError
+
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError, InvalidRequestError, NoResultFound
+from sqlalchemy.orm.exc import FlushError
+from sqlalchemy import func, and_, not_, inspect, update, delete, insert
+
 from fastapi import HTTPException
 from app.models import users as models
 from app.schemas import users as schemas
 from app.config import ALGORITHM
+
+from app.utils.decorators import timeit
     
     
 def hash_password(password: str) -> str:
@@ -82,7 +90,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[Optional[mod
     """
     return db.query(models.User).offset(skip).limit(limit).all()
 
-
+@timeit
 def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     """
     Create a new user
@@ -93,11 +101,21 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     hashed_password = hash_password(user.password)
     user_data = user.model_dump(exclude={"password"})
     user_data["hashed_password"] = hashed_password
-    db_user = models.User(**user_data)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+    stmt = insert(models.User).values(**user_data)
+    try:
+        db.execute(stmt)
+        db.commit()
+    except (IntegrityError, InvalidRequestError, FlushError) as e:
+        error_details = {
+            IntegrityError: "Email or username already registered",
+            InvalidRequestError: "Invalid request",
+            FlushError: "Flush error"
+        }
+        detail = error_details.get(type(e), "Unknown error")
+        raise HTTPException(status_code=400, detail=detail)
+    return get_user_by_email(db, email=user.email)
+
+
 
 
 def delete_user(db: Session, user_id: int) -> models.User:

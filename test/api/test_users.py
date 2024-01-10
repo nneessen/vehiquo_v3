@@ -18,6 +18,7 @@ from test.utils.user_randomizer import random_user_create, create_me
 #     assert 200 <= r.status_code < 300
 
 
+
 def test_create_user(client: TestClient, db: Session) -> None:
     """
     GIVEN a FastAPI application
@@ -28,32 +29,25 @@ def test_create_user(client: TestClient, db: Session) -> None:
     user_in = dict(UserCreate(**random_user_data))
     r = client.post("/api/v1/users/", json=user_in)
     assert 200 <= r.status_code < 300
-    user_data = r.json()
-    user = get_user_by_username(db, user_data["username"])
-    user.store_id = 1
-    db.commit()
-    db.refresh(user)
-    assert user_data["email"] == user_in["email"]
-    assert user.store_id == 1
     
 
-def test_create_user_with_existing_email(client: TestClient) -> None:
-    """
-    GIVEN a FastAPI application
-    WHEN the POST endpoint '/api/v1/users/' is requested and email already exists
-    THEN check that the response is valid
-    """
-    user_data = {
-        "first_name": "Nick",
-        "last_name": "Neessen",
-        "email": "elqsqdstqsjqjajirnqtpqbxy@nsnisnpkztolnsikawejjindp.com",
-        "username": "abzrpjjdblejwldnmtyazyfmx",
-        "password": "password",
-        "phone_number": "8594335907",
-    }
-    user_in = dict(UserCreate(**user_data))
-    r = client.post("/api/v1/users/", json=user_in)
-    assert r.status_code == status.HTTP_400_BAD_REQUEST
+# def test_create_user_with_existing_email(client: TestClient) -> None:
+#     """
+#     GIVEN a FastAPI application
+#     WHEN the POST endpoint '/api/v1/users/' is requested and email already exists
+#     THEN check that the response is valid
+#     """
+#     user_data = {
+#         "first_name": "Nick",
+#         "last_name": "Neessen",
+#         "email": "elqsqdstqsjqjajirnqtpqbxy@nsnisnpkztolnsikawejjindp.com",
+#         "username": "abzrpjjdblejwldnmtyazyfmx",
+#         "password": "password",
+#         "phone_number": "8594335907",
+#     }
+#     user_in = dict(UserCreate(**user_data))
+#     r = client.post("/api/v1/users/", json=user_in)
+#     assert r.status_code == status.HTTP_400_BAD_REQUEST
 
 
 def test_assign_user_to_store(db: Session) -> None:

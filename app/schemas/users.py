@@ -47,13 +47,19 @@ class UserOutput(BaseModel):
     )
     phone_number : str | None = None
 
+
 class UserCreate(UserBase):
     is_active: bool = True
     is_buyer: bool = False
     is_admin: bool = False
     is_superuser: bool = False
     is_blocked: bool = False
+    phone_number: str | None = Field(None, min_length=10, max_length=10)
     store_id: int | None = Field(None, description="The ID of the store the user belongs to.")
+
+
+class UserUpdate(UserBase):
+    id: int
 
 
 class UserDelete(UserBase):
@@ -66,10 +72,6 @@ class UserInDB(UserBase):
 
 class User(UserBase):
     store_id: int
-
-
-class UserInDB(UserBase):
-    hashed_password: str
 
 
 class UserLogin(UserBase):

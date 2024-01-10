@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_serializer, model_serializer
+from typing import Any, Dict
 from datetime import datetime, timedelta
 from app.schemas import vehicles as vehicles_schema
 
@@ -13,8 +14,9 @@ class UnitBase(BaseModel):
         from_attributes=True, 
         populate_by_name=True,
         extra="ignore",
-        json_encoders={datetime: lambda v: v.isoformat()},
     )
+    
+    
 
 class UnitAdd(UnitBase):
     store_id: int | None = Field(1, description="Default store ID is 1.")

@@ -31,6 +31,7 @@ def random_user_create() -> Dict:
         "username": random_lower_string(),
         "password": random_lower_string(),
         "phone_number": random_phone_number(),
+        "store_id": 1,
     }
      
 random_user_data = random_user_create()
