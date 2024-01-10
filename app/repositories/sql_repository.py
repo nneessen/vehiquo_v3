@@ -2,36 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, List, Type, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import select, and_
-
+from app.repositories.base.sql_repository_base import SqlRepositoryBase
 
 T = TypeVar("T")
-
-class SqlRepositoryBase(Generic[T], ABC):
-
-    @abstractmethod
-    def get(self, id: int) -> Optional[T]:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def get_all(self) -> List[T]:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def add(self, entity: T) -> T:
-        raise NotImplementedError()
-    
-    @abstractmethod
-    def add_all(self, entities: List[T]) -> List[T]:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def update(self, entity: T) -> T:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def delete(self, id: int) -> None:
-        raise NotImplementedError()
-
 
 class SqlRepository(SqlRepositoryBase[T], ABC):
     def __init__(self, db: Session, model: Type[T]):

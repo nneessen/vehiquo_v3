@@ -1,8 +1,6 @@
-from typing import Any, Annotated, List
+from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
-
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
 
@@ -11,14 +9,9 @@ from app.dependencies import get_db
 from app.unit_of_work.unit_of_work import UnitOfWork
 
 from app.schemas import units as units_schema
-from app.schemas import users as users_schema
 from app.schemas import vehicles as vehicles_schema
 
 from app.services import units as unit_service
-from app.services import users as user_service
-from app.services import vehicles as vehicle_service
-
-from app.routers.users import get_current_user
 
 
 

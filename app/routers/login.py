@@ -1,3 +1,5 @@
+import os
+
 from datetime import timedelta
 from typing import Annotated, Any
 
@@ -16,11 +18,15 @@ from app.schemas.tokens import Token, TokenData
 from app.services.users import authenticate, get_user_by_username, is_active
 from app.services import tokens as token_service
 from app.unit_of_work.unit_of_work import UnitOfWork
+from app.config import ALGORITHM
+
 
 router = APIRouter(tags=["Login"])
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+SECRET_KEY = os.environ.get("SECRET_KEY")
+
 
 
 @router.post("/token", response_model=Token)
@@ -44,23 +50,23 @@ async def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestF
     return Token(access_token=access_token, token_type="bearer")
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+async def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    credential_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                         detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
     try:
-        payload = jwt.decode(token, "secret", algorithms=["HS256"])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
-            raise credentials_exception
+            raise credential_exception
+
         token_data = TokenData(username=username)
     except JWTError:
-        raise credentials_exception
-    user = get_user_by_username(UnitOfWork(), username=token_data.username)
+        raise credential_exception
+
+    user = get_user_by_username(db, username=token_data.username)
     if user is None:
-        raise credentials_exception
+        raise credential_exception
+
     return user
 
 

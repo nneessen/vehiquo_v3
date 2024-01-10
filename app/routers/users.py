@@ -61,12 +61,3 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-@router.get("/users/current_user/", response_model=schemas.User)
-def get_current_user(
-    db: Session = Depends(get_db), 
-    token: str = Depends(OAuth2PasswordBearer(tokenUrl="token"))
-    ):
-    user = services.get_current_user(db, token=token)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user

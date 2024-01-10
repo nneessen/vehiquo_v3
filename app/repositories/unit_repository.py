@@ -1,44 +1,13 @@
-from abc import ABC, abstractmethod
-from typing import Any, Optional, List
-from datetime import datetime
+from typing import Optional, List
+
 from sqlalchemy.orm import Session
-from sqlalchemy import (
-    select,
-    and_,
-    func
-    )
-from app.sql_repository import SqlRepository
+
+from app.repositories.sql_repository import SqlRepository
+
+from app.repositories.base.unit_repository_base import UnitRepositoryBase
+
 from app.models.units import Unit
-from app.schemas import units as schemas
 
-
-class UnitRepositoryBase(SqlRepository[Unit], ABC):
-    @abstractmethod
-    def get(self, id: int) -> Optional[Unit]:
-        raise NotImplementedError()
-    
-    @abstractmethod
-    def get_all(self) -> List[Unit]:
-        raise NotImplementedError()
-    
-    @abstractmethod
-    def add_unit(self, unit: Unit) -> Unit:
-        raise NotImplementedError()
-    
-    @abstractmethod
-    def update_unit(self, id: int, unit: Unit) -> Unit:
-        raise NotImplementedError()
-    
-    @abstractmethod
-    def delete_unit(self, id: int) -> None:
-        raise NotImplementedError()
-    
-    @abstractmethod
-    def list_units(self, skip: int, limit: int) -> List[Unit]:
-        raise NotImplementedError()
-
-   
-    
     
 class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
     def __init__(self, db: Session) -> None:
