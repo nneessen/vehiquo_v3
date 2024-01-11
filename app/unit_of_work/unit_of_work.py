@@ -46,16 +46,34 @@ class UnitOfWorkBase(ABC):
 class UnitOfWork(UnitOfWorkBase):
     def __init__(self, db: Session = Depends(get_db)) -> None:
         self.db = db
+        self._users = None
+        self._units = None
+        self._vehicles = None
     
     def __enter__(self):
-        self.users = UserRepository(self.db)
-        self.units = UnitRepository(self.db)
-        self.vehicles = VehicleRepository(self.db)
         return super().__enter__()
     
     def __exit__(self, *args):
         super().__exit__(*args)
         self.db.close()
+    
+    @property
+    def users(self) -> UserRepositoryBase:
+        if self._users is None:
+            self._users = UserRepository(self.db)
+        return self._users
+    
+    @property
+    def units(self) -> UnitRepositoryBase:
+        if self._units is None:
+            self._units = UnitRepository(self.db)
+        return self._units
+    
+    @property
+    def vehicles(self) -> VehicleRepositoryBase:
+        if self._vehicles is None:
+            self._vehicles = VehicleRepository(self.db)
+        return self._vehicles
     
     def commit(self):
         self.db.commit()

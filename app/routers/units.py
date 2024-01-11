@@ -19,7 +19,7 @@ from app.routers.security.dependencies import oauth2_scheme
 
 router = APIRouter(prefix="/units", tags=["Units"])
 
-
+#✅ TEST ROUTE
 @router.get("/test/", response_model=units_schema.UnitOutput)
 async def read_units(token: Annotated[str, Depends(oauth2_scheme)]) -> Any:
     return {"token": token }
@@ -35,7 +35,7 @@ def create_unit(unit: units_schema.UnitAdd, vehicle: vehicles_schema.VehicleAdd,
 
 
 
-#⚠️ need to work on this function
+#✅
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[units_schema.UnitOutput])
 def get_units(db: Session = Depends(get_db)) -> units_schema.UnitOutput:
     units = unit_service.get_units(db)
@@ -46,7 +46,7 @@ def get_units(db: Session = Depends(get_db)) -> units_schema.UnitOutput:
             )
     return units
 
-
+#✅
 @router.get("/{unit_id}", status_code=status.HTTP_200_OK, response_model=units_schema.UnitOutput)
 def get_unit(unit_id: int, db: Session = Depends(get_db)) -> units_schema.UnitOutput:
     unit = unit_service.get_unit_by_id(db, unit_id=unit_id)
@@ -55,7 +55,7 @@ def get_unit(unit_id: int, db: Session = Depends(get_db)) -> units_schema.UnitOu
             status_code=404, 
             detail=f"Unit with id {unit_id} not found"
             )
-    return {"Status": "Success", "Unit": unit}
+    return unit
 
 
 @router.delete("/{unit_id}", response_model=units_schema.UnitOutput)
