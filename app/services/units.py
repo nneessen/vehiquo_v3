@@ -34,8 +34,8 @@ def get_units(db: Session, skip: int = 0, limit: int = 100) -> List[unit_schema.
     units = db.query(unit_model.Unit).offset(skip).limit(limit).all()
     unit_outputs = []
     for unit in units:
-        vehicle_data = vehicle_schema.VehicleOutput.from_orm(unit.vehicle) if unit.vehicle else None
-        unit_data = unit_schema.UnitOutput.from_orm(unit)
+        vehicle_data = vehicle_schema.VehicleOutput.model_validate(unit.vehicle) if unit.vehicle else None
+        unit_data = unit_schema.UnitOutput.model_validate(unit)
         unit_data.vehicle = vehicle_data
         unit_outputs.append(unit_data)
     return unit_outputs
