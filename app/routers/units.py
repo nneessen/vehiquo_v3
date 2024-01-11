@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 
@@ -13,9 +13,17 @@ from app.schemas import vehicles as vehicles_schema
 
 from app.services import units as unit_service
 
+from app.routers.security.dependencies import oauth2_scheme
+
 
 
 router = APIRouter(prefix="/units", tags=["Units"])
+
+
+@router.get("/test/", status_code=status.HTTP_200_OK)
+async def read_units(token: Annotated[str, Depends(oauth2_scheme)]) -> Any:
+    return {"token": token }
+
 
 #✅
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=units_schema.UnitOutput)

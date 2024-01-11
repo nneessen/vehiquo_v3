@@ -11,6 +11,7 @@ from app.dependencies import get_db
 from app.schemas import users as schemas
 from app.services import users as services
 from app.unit_of_work.unit_of_work import UnitOfWork
+from app.routers.security.dependencies import oauth2_scheme, get_current_user
 
 
 router = APIRouter(tags=["Users"])
@@ -38,7 +39,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)) -> sche
 
 @router.get("/users/{user_id}", status_code=status.HTTP_200_OK)
 def get_user(user_id: int, db: Session = Depends(get_db)):
-    user = services.get_user(db, user_id=user_id)
+    user = services.get_user_by_id(db, user_id=user_id)
     if not user:
         raise HTTPException(
             status_code=404, 
@@ -61,3 +62,6 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
+@router.get("/users/me/")
+def read_users_me(current_user: schemas.User = Depends(get_current_user)):
+    return current_user

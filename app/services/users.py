@@ -1,19 +1,20 @@
 import bcrypt
-import os
+
+from fastapi import HTTPException
 
 from typing import List, Optional
 
-from jose import jwt, JWTError
-
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError, InvalidRequestError, NoResultFound
+
 from sqlalchemy.orm.exc import FlushError
+
+from sqlalchemy.exc import IntegrityError, InvalidRequestError
+
 from sqlalchemy import func, and_, not_, inspect, update, delete, insert
 
-from fastapi import HTTPException
 from app.models import users as models
+
 from app.schemas import users as schemas
-from app.config import ALGORITHM
 
 from app.utils.decorators import timeit
     
@@ -37,7 +38,17 @@ def verify_password(password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(password.encode("utf-8"), hashed_password.encode("utf-8"))
 
 
-def get_user(db: Session, user_id: int) -> Optional[models.User]:
+
+def get_user(db, username: str):
+    """
+    Get a user by username
+    @param db: SQLAlchemy database session
+    @param username: Username of the user to get
+    @return: The user with the given username
+    """
+    return db.query(models.User).filter(models.User.username == username).first()
+
+def get_user_by_id(db: Session, user_id: int) -> Optional[models.User]:
     """
     Get a user by ID
     @param db: SQLAlchemy database session
@@ -160,7 +171,7 @@ def deactivate_user(db: Session, user_id: int) -> models.User:
     return db_user
 
 
-def authenticate(db: Session, *, username: str, password: str) -> Optional[models.User]:
+def authenticate_user(db: Session, username: str, password: str) -> Optional[models.User]:
     """
     Authenticate a user
     @param db: SQLAlchemy database session
@@ -168,7 +179,7 @@ def authenticate(db: Session, *, username: str, password: str) -> Optional[model
     @param password: Password of the user to authenticate
     @return: The authenticated user
     """
-    user = get_user_by_username(db, username=username)
+    user = get_user(db, username=username)
     if not user:
         return None
     if not verify_password(password, user.hashed_password):
