@@ -1,7 +1,5 @@
 import os
 
-import jwt
-
 from typing import Annotated, Any
 
 from datetime import datetime, timedelta
@@ -11,7 +9,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from passlib.context import CryptContext
 
-from jose import JWTError
+from jose import JWTError, jwt
 
 from sqlalchemy.orm import Session
 
@@ -26,7 +24,7 @@ from app.config import ALGORITHM
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/token")
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
@@ -68,7 +66,8 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
     return user
 
 
-async def get_current_active_user(current_user: Annotated[user_schema.User, Depends(get_current_user)]) -> Any:
-    if not is_active(current_user):
+async def get_current_active_user(current_user: Annotated[user_schema.UserBase, Depends(get_current_user)]
+):
+    if current_user.is_active is False:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

@@ -26,7 +26,7 @@ class UserBase(BaseModel):
     model_config: ConfigDict = ConfigDict(
         from_attributes=True, 
         populate_by_name=True,
-        extra="ignore"
+        arbitrary_types_allowed=True
     )
 
 

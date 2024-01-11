@@ -20,7 +20,7 @@ from app.routers.security.dependencies import oauth2_scheme
 router = APIRouter(prefix="/units", tags=["Units"])
 
 
-@router.get("/test/", status_code=status.HTTP_200_OK)
+@router.get("/test/", response_model=units_schema.UnitOutput)
 async def read_units(token: Annotated[str, Depends(oauth2_scheme)]) -> Any:
     return {"token": token }
 

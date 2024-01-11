@@ -1,45 +1,76 @@
 from typing import Any, Annotated
 
+from datetime import timedelta
+
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
 
 from app.schemas import users as schemas
-from app.services import users as services
+from app.schemas import tokens as token_schema
+
 from app.unit_of_work.unit_of_work import UnitOfWork
-from app.routers.security.dependencies import oauth2_scheme, get_current_user
+
+from app.services import users as user_service
+
+from app.routers.security.dependencies import get_current_active_user, create_access_token
+
+from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
+
+
 
 
 router = APIRouter(tags=["Users"])
 
 
+@router.post("/token", response_model=token_schema.Token)
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)) -> Any:
+    """
+    OAuth2 compatible token login, get an access token for future requests
+    """
+    user = user_service.authenticate_user(
+        db, username=form_data.username, password=form_data.password
+    )
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
 @router.post("/users/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOutput)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)) -> schemas.UserOutput:
     with UnitOfWork(db) as uow:
-        db_user = services.get_user_by_email(db, email=user.email)
+        db_user = user_service.get_user_by_email(db, email=user.email)
         if db_user:
             raise HTTPException(
                 status_code=400, 
                 detail="Email already registered"
                 )
-        db_user = services.get_user_by_username(db, username=user.username)
+        db_user = user_service.get_user_by_username(db, username=user.username)
         if db_user:
             raise HTTPException(
                 status_code=400, 
                 detail="Username already registered"
                 )
-        db_user = services.create_user(db, user=user)
+        db_user = user_service.create_user(db, user=user)
         uow.commit()
         return db_user
 
 
 @router.get("/users/{user_id}", status_code=status.HTTP_200_OK)
 def get_user(user_id: int, db: Session = Depends(get_db)):
-    user = services.get_user_by_id(db, user_id=user_id)
+    user = user_service.get_user_by_id(db, user_id=user_id)
     if not user:
         raise HTTPException(
             status_code=404, 
@@ -50,18 +81,18 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 
 @router.get("/users/", status_code=status.HTTP_200_OK)
 def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = services.get_users(db, skip=skip, limit=limit)
+    users = user_service.get_users(db, skip=skip, limit=limit)
     return {"Status": "Success", "Users": users}
 
 
-@router.delete("/users/{user_id}", response_model=schemas.User)
+@router.delete("/users/{user_id}", response_model=schemas.UserDelete)
 def delete_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = services.delete_user(db, user_id=user_id)
+    db_user = user_service.delete_user(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
 
-@router.get("/users/me/")
-def read_users_me(current_user: schemas.User = Depends(get_current_user)):
+@router.get("/users/me/", response_model=schemas.UserOutput)
+def read_users_me(current_user: Annotated[schemas.UserOutput, Depends(get_current_active_user)]):
     return current_user
