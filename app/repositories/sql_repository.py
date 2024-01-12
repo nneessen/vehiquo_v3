@@ -12,10 +12,10 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
         self.model = model
 
     def _add(self, entity: T) -> T:
-        self.model = self.model(**entity.__dict__)
-        self.db.add(self.model)
+        stmt = insert(self.model).values(**entity.__dict__)
+        result = self.db.execute(stmt)
         self.db.commit()
-        self.db.refresh(self.model)
-        return self.model
-    
-  
+        
+        inserted_id = result.inserted_primary_key[0]
+        return self.db.query(self.model).get(inserted_id)
+
