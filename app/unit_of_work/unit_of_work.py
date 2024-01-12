@@ -2,13 +2,11 @@ import logging
 
 from abc import ABC, abstractmethod
 from typing import Callable
-from fastapi import Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import select, and_
 
 from app.logging_config import setup_logging
 
-from app.dependencies import get_db
 
 from app.repositories.user_repository import UserRepositoryBase, UserRepository
 from app.repositories.vehicle_repository import VehicleRepositoryBase, VehicleRepository
@@ -44,7 +42,7 @@ class UnitOfWorkBase(ABC):
     
 
 class UnitOfWork(UnitOfWorkBase):
-    def __init__(self, db: Session = Depends(get_db)) -> None:
+    def __init__(self, db: Callable[[], Session]):
         self.db = db
         self._users = None
         self._units = None

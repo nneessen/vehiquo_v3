@@ -12,6 +12,8 @@ from app.models import vehicles as vehicle_model
 from app.schemas import units as unit_schema
 from app.schemas import vehicles as vehicle_schema
 
+from app.unit_of_work.unit_of_work import UnitOfWork
+
 
 def get_unit_by_id(db: Session, unit_id: int) -> Optional[unit_model.Unit]:
     """
@@ -60,17 +62,15 @@ def create_unit(db: Session, unit: unit_schema.UnitAdd, vehicle: vehicle_schema.
     @return: The created unit
     """
     try:
-        db_unit = unit_model.Unit(**unit.model_dump())
-        db_vehicle = vehicle_model.Vehicle(**vehicle.model_dump())
-        db_unit.vehicle = db_vehicle
-        db.add_all([db_unit, db_vehicle])
-        db.commit()
-        db.refresh(db_unit)
-        db.refresh(db_vehicle)
-        return db_unit
+        with UnitOfWork(db) as uow:
+            db_unit = uow.units.add_unit(unit)
+            db_vehicle = uow.vehicles.add_vehicle(vehicle)
+            db_unit.vehicle_id = db_vehicle.id
+            db.commit()
+            db.refresh(db_unit)
+            return db_unit
     except Exception as e:
-        db.rollback()
-        raise e
+        raise HTTPException(status_code=400, detail=str(e))
 
 def delete_unit(db: Session, unit_id: int) -> unit_model.Unit:
     """✅

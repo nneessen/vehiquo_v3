@@ -13,14 +13,5 @@ class VehicleRepository(VehicleRepositoryBase, SqlRepository[Vehicle]):
     def __init__(self, db: Session) -> None:
         super().__init__(db, Vehicle)
         
-    def get(self, id: int) -> Optional[Vehicle]:
-        return self.db.query(self.model).filter(self.model.id == id).first()
-    
-    def get_all(self) -> List[Vehicle]:
-        return super().get_all()
-    
-    def add_vehicle(self, vehicle: Vehicle) -> Vehicle:
-        self.db.add(vehicle)
-        self.db.commit()
-        self.db.refresh(vehicle)
-        return vehicle
+    def add_vehicle(self, entity: Vehicle) -> Vehicle:
+        return super()._add(entity)
