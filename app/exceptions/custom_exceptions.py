@@ -1,11 +1,10 @@
-class AddUnitException(Exception):
+class CustomException(Exception):
     def __init__(self, message, error_code):
-        super().init(message)
+        super().__init__(message)
         self.error_code = error_code
 
+class AddUnitException(CustomException):
+    pass
 
-
-class DeleteUnitException(Exception):
-    def __init__(self, message, error_code):
-        super().init(message)
-        self.error_code = error_code
+class DeleteUnitException(CustomException):
+    pass
