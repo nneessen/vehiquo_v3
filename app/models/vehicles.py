@@ -35,5 +35,5 @@ class Vehicle(Base):
     msrp = Column(Integer, nullable=True)
     
     # Relationships
-    units = relationship('Unit', backref='vehicle', lazy='joined', cascade='all, delete-orphan', uselist=False)
+    units = relationship('Unit', back_populates='vehicle')
     

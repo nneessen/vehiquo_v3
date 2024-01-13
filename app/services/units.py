@@ -79,19 +79,18 @@ def delete_unit(db: Session, unit_id: int) -> unit_model.Unit:
     @param unit_id: ID of the unit to delete
     @return: The deleted unit
     """
-    db_unit = db.query(unit_model.Unit).filter(unit_model.Unit.id == unit_id).first()
-    vehicle = db.query(vehicle_model.Vehicle).filter(vehicle_model.Vehicle.id == db_unit.vehicle_id).first()
-
-    if db_unit is None:
-        raise HTTPException(status_code=404, detail="Unit not found")
-
-    if vehicle is None:
+    vehicle_id = db.query(unit_model.Unit).filter(unit_model.Unit.id == unit_id).first().vehicle_id
+    if not vehicle_id:
         raise HTTPException(status_code=404, detail="Vehicle not found")
-
-    db.delete(vehicle)
-    db.delete(db_unit)
-    db.commit()
-    return db_unit
+    try:
+        with UnitOfWork(db) as uow:
+            db_unit = uow.units.delete_unit(unit_id)
+            uow.vehicles.delete_vehicle(vehicle_id)
+            uow.commit()
+            return db_unit
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
 
 
 def expire_units(db: Session) -> bool:

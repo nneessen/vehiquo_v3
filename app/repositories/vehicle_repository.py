@@ -15,3 +15,6 @@ class VehicleRepository(VehicleRepositoryBase, SqlRepository[Vehicle]):
         
     def add_vehicle(self, entity: Vehicle) -> Vehicle:
         return super()._add(entity)
+    
+    def delete_vehicle(self, vehicle_id: int) -> Vehicle:
+        return super()._delete(vehicle_id)

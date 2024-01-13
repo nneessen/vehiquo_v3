@@ -9,3 +9,7 @@ class SqlRepositoryBase(Generic[T], ABC):
     @abstractmethod
     def _add(self, entity: T) -> T:
         raise NotImplementedError()
+    
+    @abstractmethod
+    def _delete(self, entity_id: int):
+        raise NotImplementedError()

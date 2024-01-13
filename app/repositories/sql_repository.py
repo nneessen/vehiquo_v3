@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, and_, update, delete, insert, exists, func
 from app.repositories.base.sql_repository_base import SqlRepositoryBase
 
+
 T = TypeVar("T")
 
 class SqlRepository(SqlRepositoryBase[T], ABC):
@@ -12,10 +13,22 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
         self.model = model
 
     def _add(self, entity: T) -> T:
-        stmt = insert(self.model).values(**entity.__dict__)
-        result = self.db.execute(stmt)
-        self.db.commit()
-        
-        inserted_id = result.inserted_primary_key[0]
-        return self.db.query(self.model).get(inserted_id)
+        try:
+            stmt = insert(self.model).values(**entity.__dict__)
+            result = self.db.execute(stmt)
+            self.db.commit()
+            
+            inserted_id = result.inserted_primary_key[0]
+            return self.db.query(self.model).get(inserted_id)
+        except Exception as e:
+            self.db.rollback()
+            raise e
 
+    def _delete(self, entity_id: int):
+        try:
+            stmt = delete(self.model).where(self.model.id == entity_id)
+            self.db.execute(stmt)
+            self.db.commit()
+        except Exception as e:
+            self.db.rollback()
+            raise e

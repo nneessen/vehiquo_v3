@@ -6,8 +6,6 @@ from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
 
-from app.unit_of_work.unit_of_work import UnitOfWork
-
 from app.schemas import units as units_schema
 from app.schemas import vehicles as vehicles_schema
 
@@ -58,18 +56,13 @@ def get_unit(unit_id: int, db: Session = Depends(get_db)) -> units_schema.UnitOu
     return unit
 
 
-@router.delete("/{unit_id}", response_model=units_schema.UnitOutput)
-def delete_unit(unit_id: int, db: Session = Depends(get_db)) -> units_schema.UnitOutput:
-    with UnitOfWork(db) as uow:
-        try:
-            db_unit = unit_service.delete_unit(db, unit_id=unit_id)
-            if db_unit is None:
-                raise HTTPException(status_code=404, detail="Unit not found")
-            uow.commit()
-            return {"Status": "Success", "Unit": db_unit}
-        except Exception as e:
-            uow.rollback()
-            raise e
+@router.delete("/{unit_id}", status_code=status.HTTP_200_OK, response_model=None)
+def delete_unit(unit_id: int, db: Session = Depends(get_db)) -> None:
+    unit_service.delete_unit(db, unit_id=unit_id)
+    return {
+        "Status": "Success", 
+        "Message": f"Unit with id {unit_id} deleted."
+    }
         
 @router.post("/expire_units", status_code=status.HTTP_200_OK)
 async def expire_units(background_tasks: BackgroundTasks, db: Session = Depends(get_db)) -> Any:
