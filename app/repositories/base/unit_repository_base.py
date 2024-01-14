@@ -17,4 +17,6 @@ class UnitRepositoryBase(SqlRepository[Unit], ABC):
     def delete_unit(self, entity_id: int):
         raise NotImplementedError()
     
-    
+    @abstractmethod
+    def get_unit(self, entity_id: int) -> Optional[Unit]:
+        raise NotImplementedError()

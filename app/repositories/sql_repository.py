@@ -26,9 +26,18 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
 
     def _delete(self, entity_id: int):
         try:
-            stmt = delete(self.model).where(self.model.id == entity_id)
+            stmt = delete(self.model).where(self.model.id==entity_id)
             self.db.execute(stmt)
             self.db.commit()
+        except Exception as e:
+            self.db.rollback()
+            raise e
+#
+    def _get(self, entity_id: int) -> Optional[T]:
+        try:
+            stmt = select(self.model).where(self.model.id==entity_id)
+            result = self.db.execute(stmt)
+            return result.fetchone()
         except Exception as e:
             self.db.rollback()
             raise e

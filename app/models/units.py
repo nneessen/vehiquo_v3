@@ -51,3 +51,40 @@ class Unit(Base):
     vehicle_id = Column(Integer, ForeignKey("vehicles.id"))
     purchased_by = Column(Integer, ForeignKey("users.id"))
     added_by = Column(Integer, ForeignKey("users.id"))
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "stock_number": self.stock_number,
+            "purchase_date": self.purchase_date,
+            "list_date": self.list_date,
+            "sold_date": self.sold_date,
+            "expire_date": self.expire_date,
+            "purchase_price": self.purchase_price,
+            "buy_now_price": self.buy_now_price,
+            "vehicle_age": self.vehicle_age,
+            "transportation_fee": self.transportation_fee,
+            "transportation_distance": self.transportation_distance,
+            "transport_company": self.transport_company,
+            "vehicle_cost": self.vehicle_cost,
+            "maxoffer_value": self.maxoffer_value,
+            "maxoffer_clock": self.maxoffer_clock,
+            "sold_status": self.sold_status,
+            "purchased": self.purchased,
+            "is_expired": self.is_expired,
+            "cdk_deal_number": self.cdk_deal_number,
+            "retailWholesale": self.retailWholesale,
+            "retail_front_gross": self.retail_front_gross,
+            "retail_back_gross": self.retail_back_gross,
+            "wholesale_gross": self.wholesale_gross,
+            "total_retail_gross": self.total_retail_gross,
+            "zip_code_loc": self.zip_code_loc,
+            "delivery_status": self.delivery_status,
+            "buy_fee": self.buy_fee,
+            "vehicle": self.vehicle.to_dict(),
+            "store_id": self.store_id,
+            "vehicle_id": self.vehicle_id,
+            "purchased_by": self.purchased_by,
+            "added_by": self.added_by,
+            
+        }

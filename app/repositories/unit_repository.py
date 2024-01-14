@@ -34,3 +34,11 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
             message = f"Error deleting unit with id {unit_id}"
             error_code = "unit_delete_error"
             raise DeleteUnitException(message, error_code)
+
+    def get_unit(self, unit_id: int) -> Optional[Unit]:
+        try:
+            return super()._get(unit_id)
+        except Exception as e:
+            message = f"Error getting unit with id {unit_id}"
+            error_code = "unit_get_error"
+            raise DeleteUnitException(message, error_code)
