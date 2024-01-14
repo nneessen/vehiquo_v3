@@ -6,29 +6,30 @@ from sqlalchemy.orm import Session
 
 from app.schemas.users import UserCreate
 from app.services.users import get_user_by_email, create_user, get_user_by_username, get_user
-from test.utils.user_randomizer import random_user_create, create_me
+from test.utils.user_randomizer import random_user_create, create_admin
 
 
 
     
-def create_me_as_admin(client: TestClient, db: Session) -> None:
-    me = create_me()
-    user_in = dict(UserCreate(me))
+def create_admin(client: TestClient, db: Session) -> None:
+    admin_user_data = create_admin()
+    user_in = dict(UserCreate(**admin_user_data))
     r = client.post("/api/v1/users/", json=user_in)
     assert 200 <= r.status_code < 300
 
 
 
-# def test_create_user(client: TestClient, db: Session) -> None:
-#     """
-#     GIVEN a FastAPI application
-#     WHEN the POST endpoint '/api/v1/users/' is requested
-#     THEN check that the response is valid
-#     """
-#     random_user_data = random_user_create()
-#     user_in = dict(UserCreate(**random_user_data))
-#     r = client.post("/api/v1/users/", json=user_in)
-#     assert 200 <= r.status_code < 300
+
+def test_create_user(client: TestClient, db: Session) -> None:
+    """
+    GIVEN a FastAPI application
+    WHEN the POST endpoint '/api/v1/users/' is requested
+    THEN check that the response is valid
+    """
+    random_user_data = random_user_create()
+    user_in = dict(UserCreate(**random_user_data))
+    r = client.post("/api/v1/users/", json=user_in)
+    assert 200 <= r.status_code < 300
     
 
 # def test_create_user_with_existing_email(client: TestClient) -> None:

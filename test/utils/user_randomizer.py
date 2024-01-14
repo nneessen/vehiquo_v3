@@ -37,7 +37,7 @@ def random_user_create() -> Dict:
 random_user_data = random_user_create()
 
 
-def create_me() -> Dict:
+def create_admin() -> Dict:
     return {
         "first_name": "Nick",
         "last_name": "Neessen",

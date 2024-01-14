@@ -16,15 +16,15 @@ from app.services.stores import create_store, get_store_by_id
 #     THEN check that the response is valid
 #     """
 #     store_data = {
-#         "name": "Test Store 2",
-#         "street_address": "123 Main St",
-#         "city": "Lexington",
-#         "state": "KY",
-#         "zip_code": 40517,
-#         "phone": "8595555555",
-#         "admin_clerk_1": "John Doe",
+#         "name": "N/A",
+#         "street_address": "N/A",
+#         "city": "N/A",
+#         "state": "N/A",
+#         "zip_code": 60610,
+#         "phone": "1111111111",
+#         "admin_clerk_1": "N/A",
 #         "is_primary_hub": True,
-#         "qb_customer_id": 123456,
+#         "qb_customer_id": 1,
 #     }
 #     r = client.post("/api/v1/stores/", json=store_data)
 #     assert 200 <= r.status_code < 300

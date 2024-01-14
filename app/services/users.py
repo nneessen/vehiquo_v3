@@ -18,6 +18,8 @@ from app.schemas import users as schemas
 
 from app.utils.decorators import timeit
 
+from app.unit_of_work.unit_of_work import UnitOfWork
+
 
 def authenticate_user(db: Session, username: str, password: str) -> Optional[models.User]:
     user = get_user(db, username=username)
@@ -54,14 +56,33 @@ def confirm(db: Session, user: models.User) -> models.User:
     db.refresh(user)
     return user
 
-def create_user(db: Session, user: schemas.UserCreate) -> models.User:
+"""
     hashed_password = hash_password(user.password)
     user_data = user.model_dump(exclude={"password"})
     user_data["hashed_password"] = hashed_password
-    stmt = insert(models.User).values(**user_data)
     try:
-        db.execute(stmt)
-        db.commit()
+        with UnitOfWork(db) as uow:
+            uow.users.add_user(user_data)
+            uow.commit()
+    except (IntegrityError, InvalidRequestError, FlushError) as e:
+        error_details = {
+            IntegrityError: "Email or username already registered",
+            InvalidRequestError: "Invalid request",
+            FlushError: "Flush error"
+        }
+        detail = error_details.get(type(e), "Unknown error")
+        raise HTTPException(status_code=400, detail=detail)
+    return get_user_by_email(db, email=user.email)
+"""
+
+
+def create_user(db: Session, user: schemas.UserCreate) -> models.User:
+    try:
+        with UnitOfWork(db) as uow:
+            db_user = uow.users.add_user(user)
+            db_user.hashed_password = hash_password(user.password)
+            db_user.password = None
+            uow.commit()
     except (IntegrityError, InvalidRequestError, FlushError) as e:
         error_details = {
             IntegrityError: "Email or username already registered",
