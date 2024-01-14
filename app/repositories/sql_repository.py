@@ -41,3 +41,13 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
         except Exception as e:
             self.db.rollback()
             raise e
+
+    def _update(self, entity: T, entity_id: int) -> T:
+        try:
+            stmt = update(self.model).where(self.model.id==entity_id).values(**entity.__dict__)
+            self.db.execute(stmt)
+            self.db.commit()
+            return self.db.query(self.model).get(entity_id)
+        except Exception as e:
+            self.db.rollback()
+            raise e

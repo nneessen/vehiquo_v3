@@ -20,3 +20,7 @@ class UnitRepositoryBase(SqlRepository[Unit], ABC):
     @abstractmethod
     def get_unit(self, entity_id: int) -> Optional[Unit]:
         raise NotImplementedError()
+    
+    @abstractmethod
+    def update_unit(self, entity: Unit, entity_id: int) -> Unit:
+        raise NotImplementedError()

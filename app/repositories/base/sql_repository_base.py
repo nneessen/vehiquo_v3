@@ -17,3 +17,7 @@ class SqlRepositoryBase(Generic[T], ABC):
     @abstractmethod
     def _get(self, entity_id: int) -> Optional[T]:
         raise NotImplementedError()
+    
+    @abstractmethod
+    def _update(self, entity: T, entity_id: int) -> T:
+        raise NotImplementedError()

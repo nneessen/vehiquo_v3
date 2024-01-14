@@ -8,3 +8,6 @@ class AddUnitException(CustomException):
 
 class DeleteUnitException(CustomException):
     pass
+
+class UpdateUnitException(CustomException):
+    pass

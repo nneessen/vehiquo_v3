@@ -12,7 +12,8 @@ from app.models.units import Unit
 
 from app.exceptions.custom_exceptions import (
     DeleteUnitException,
-    AddUnitException
+    AddUnitException,
+    UpdateUnitException
 )
     
 class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
@@ -41,4 +42,12 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
         except Exception as e:
             message = f"Error getting unit with id {unit_id}"
             error_code = "unit_get_error"
+            raise DeleteUnitException(message, error_code)
+
+    def update_unit(self, unit: Unit, unit_id: int) -> Unit:
+        try:
+            return super()._update(unit, unit_id)
+        except Exception as e:
+            message = f"Error updating unit with id {unit.id}"
+            error_code = "unit_update_error"
             raise DeleteUnitException(message, error_code)

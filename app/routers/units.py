@@ -68,3 +68,10 @@ def delete_unit(unit_id: int, db: Session = Depends(get_db)) -> None:
 async def expire_units(background_tasks: BackgroundTasks, db: Session = Depends(get_db)) -> Any:
     background_tasks.add_task(unit_service.check_and_expire_units, db)
     return {"Status": "Success", "Message": "Expire units task added to background tasks."}
+
+@router.put("/{unit_id}", status_code=status.HTTP_200_OK, response_model=units_schema.UnitOutput)
+def update_unit(unit_id: int, unit: units_schema.UnitAdd, db: Session = Depends(get_db)) -> units_schema.UnitOutput:
+    db_unit = unit_service.update_unit(db, unit=unit, unit_id=unit_id)
+    if db_unit is None:
+        raise HTTPException(status_code=404, detail="Unit not found")
+    return {"Status": "Success", "Unit": db_unit}

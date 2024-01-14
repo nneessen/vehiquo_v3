@@ -119,21 +119,20 @@ def check_and_expire_units(db: Session) -> None:
 
 
 
-def update_unit(db: Session, unit: unit_schema.UnitUpdate) -> unit_model.Unit:
+def update_unit(db: Session, unit:unit_schema.UnitUpdate, unit_id: int) -> unit_model.Unit:
     """
     Update a unit
     @param db: SQLAlchemy database session
     @param unit: Unit to update
     @return: The updated unit
     """
-    db_unit = db.query(unit_model.Unit).filter(unit_model.Unit.id == unit.id).first()
-    if not db_unit:
-        raise HTTPException(status_code=404, detail="Unit not found")
-    for var, value in vars(unit).items():
-        setattr(db_unit, var, value) if value else None
-    db.commit()
-    db.refresh(db_unit)
-    return db_unit
+    try:
+        with UnitOfWork(db) as uow:
+            db_unit = uow.units.update_unit(unit, unit_id)
+            uow.commit()
+            return db_unit
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 def add_vehicle_to_unit(db: Session, vehicle_id: int, unit_id: int) -> unit_model.Unit:
