@@ -84,17 +84,19 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 @router.get("/users/", status_code=status.HTTP_200_OK)
 def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = user_service.get_users(db, skip=skip, limit=limit)
+    if not users:
+        raise HTTPException(
+            status_code=404, 
+            detail="No users found"
+            )
     return {"Status": "Success", "Users": users}
 
 
 @router.delete("/users/{user_id}", status_code=status.HTTP_200_OK)
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     delete_result = user_service.delete_user(db, user_id=user_id)
-    if delete_result is None:
-        raise HTTPException(
-            status_code=404, 
-            detail=f"User with id {user_id} not found or already deleted"
-            )
+    if delete_result["Status"] == "Failed":
+        return delete_result
     return {"Status": "Success", "User": delete_result}
 
     

@@ -91,6 +91,8 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.User:
         return {"Status": "Failed", "Detail": detail}
     return get_user_by_email(db, email=user.email)
 
+#✅ Takes 0.0245s to delete user
+@timeit
 def delete_user(db: Session, user_id: int) -> None:
     user = get_user_by_id(db, user_id=user_id)
     if not user:
