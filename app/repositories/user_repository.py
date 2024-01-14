@@ -32,8 +32,8 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
         try:
             return super()._delete(user_id)
         except Exception as e:
-            message = f"Error deleting user with id {user_id}"
-            error_code = "user_delete_error"
+            message = f"Error occured while deleting user with id {user_id}"
+            error_code = "UserRepository.delete_user error"
             raise DeleteUserException(message, error_code)
     
     def get_user(self, user_id: int) -> Optional[User]:

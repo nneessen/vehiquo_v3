@@ -1,7 +1,5 @@
 import bcrypt
 
-from fastapi import HTTPException
-
 from typing import List, Optional
 
 from sqlalchemy.orm import Session
@@ -75,7 +73,7 @@ def confirm(db: Session, user: models.User) -> models.User:
     return get_user_by_email(db, email=user.email)
 """
 
-
+#✅ Takes 0.1808s to create user
 def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     try:
         with UnitOfWork(db) as uow:
@@ -90,15 +88,21 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.User:
             FlushError: "Flush error"
         }
         detail = error_details.get(type(e), "Unknown error")
-        raise HTTPException(status_code=400, detail=detail)
+        return {"Status": "Failed", "Detail": detail}
     return get_user_by_email(db, email=user.email)
 
-def delete_user(db: Session, user_id: int) -> models.User:
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    db.delete(db_user)
-    db.commit()
-    return db_user
-
+def delete_user(db: Session, user_id: int) -> None:
+    user = get_user_by_id(db, user_id=user_id)
+    if not user:
+        return {"Status": "Failed", "Detail": f"User with id {user_id} not found"}
+    try:
+        with UnitOfWork(db) as uow:
+            uow.users.delete_user(user_id)
+            uow.commit()
+    except Exception as e:
+        return {"Status": "Failed", "Detail": f"Error deleting user with id {user_id}"}
+            
+    
 def activate_user(db: Session, user_id: int) -> models.User:
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     db_user.is_active = True
