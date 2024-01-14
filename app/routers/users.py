@@ -97,7 +97,7 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     delete_result = user_service.delete_user(db, user_id=user_id)
     if delete_result["Status"] == "Failed":
         return delete_result
-    return {"Status": "Success", "User": delete_result}
+    return delete_result
 
     
 
