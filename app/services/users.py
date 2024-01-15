@@ -40,7 +40,14 @@ def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[Optional[mod
     return db.query(models.User).offset(skip).limit(limit).all()
 
 def get_user_by_id(db: Session, user_id: int) -> Optional[models.User]:
-    return db.query(models.User).filter(models.User.id == user_id).first()
+    try:
+        with UnitOfWork(db) as uow:
+            user = uow.users.get_user(user_id)
+            uow.commit()
+            return user.as_dict()
+    except Exception as e:
+        return {"Status": "Failed", "Detail": f"Error getting user with id {user_id}"}
+
 
 def get_user_by_email(db: Session, email: str) -> Optional[models.User]:
     return db.query(models.User).filter(models.User.email == email).first()

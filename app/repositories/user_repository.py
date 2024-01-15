@@ -14,7 +14,7 @@ from app.exceptions.custom_exceptions import (
     UpdateUserException,
     GetUserException
 )
-    
+
 
 class UserRepository(UserRepositoryBase, SqlRepository[User]):
     def __init__(self, db: Session) -> None:

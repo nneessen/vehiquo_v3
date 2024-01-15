@@ -70,15 +70,15 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)) -> sche
     return {"Status": "Success", "User": db_user}
 
 
-@router.get("/users/{user_id}", status_code=status.HTTP_200_OK)
-def get_user(user_id: int, db: Session = Depends(get_db)):
+@router.get("/users/{user_id}", status_code=status.HTTP_200_OK, response_model=schemas.UserOutput)
+def get_user(user_id: int, db: Session = Depends(get_db)) -> schemas.UserOutput:
     user = user_service.get_user_by_id(db, user_id=user_id)
     if not user:
         raise HTTPException(
             status_code=404, 
             detail=f"User with id {user_id} not found"
             )
-    return {"Status": "Success", "User": user}
+    return user
 
 
 @router.get("/users/", status_code=status.HTTP_200_OK)

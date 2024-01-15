@@ -35,9 +35,8 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
 #
     def _get(self, entity_id: int) -> Optional[T]:
         try:
-            stmt = select(self.model).where(self.model.id==entity_id)
-            result = self.db.execute(stmt)
-            return result.fetchone()
+            entity = self.db.query(self.model).where(self.model.id==entity_id).first()
+            return entity
         except Exception as e:
             self.db.rollback()
             raise e
