@@ -1,5 +1,9 @@
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
+
 from typing import List
+
+from app.schemas import stores as store_schema
+
 
 class UserBase(BaseModel):
     first_name : str | None = Field(None, min_length=2, max_length=50)
@@ -31,6 +35,7 @@ class UserBase(BaseModel):
 
 
 class UserOutput(BaseModel):
+    id: int | None = None
     first_name : str | None = Field(None, min_length=2, max_length=50)
     last_name : str | None = Field(None, min_length=2, max_length=50)
     email : EmailStr | None = Field(
@@ -46,6 +51,8 @@ class UserOutput(BaseModel):
         description="Username must be between 5 and 25 characters and can only contain letters, numbers, underscores, and dashes."
     )
     phone_number : str | None = None
+    
+    store: store_schema.StoreOutput | None = None
 
 
 class UserCreate(UserBase):

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from typing import Optional, List
+from typing import Optional, List, Any
 
 from app.repositories.sql_repository import SqlRepository
 
@@ -23,7 +23,14 @@ class UserRepositoryBase(SqlRepository[User], ABC):
         raise NotImplementedError()
     
     @abstractmethod
-    def get_users(self, skip: int, limit: int) -> List[User]:
+    def get_users(self, 
+        skip: int, 
+        limit: int,
+        filter: Optional[dict] = None,
+        to_join: bool = False,
+        model_to_join: Optional[str] = None,
+        joined_model_filters: Optional[dict] = None
+        ) -> List[User]:
         raise NotImplementedError()
     
     @abstractmethod

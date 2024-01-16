@@ -31,7 +31,7 @@ class StoreDelete(StoreBase):
 
 
 class StoreOutput(StoreBase):
-    pass
+    id : int | None = None
 
 
 class Store(StoreBase):

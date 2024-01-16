@@ -44,9 +44,16 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
             error_code = "user_get_error"
             raise GetUserException(message, error_code)
 
-    def get_users(self, skip: int, limit: int) -> List[User]:
+    def get_users(self, 
+        skip: int, 
+        limit: int,
+        filter: Optional[dict] = None,
+        to_join: bool = False,
+        model_to_join: Optional[str] = None,
+        joined_model_filters: Optional[dict] = None
+        ) -> List[User]:
         try:
-            return super()._get_all(skip, limit)
+            return super()._get_all(skip, limit, filter, to_join, model_to_join, joined_model_filters)
         except Exception as e:
             message = f"Error getting users"
             error_code = "user_get_all_error"

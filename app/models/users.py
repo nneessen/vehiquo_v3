@@ -33,3 +33,4 @@ class User(Base):
         else:
             user_dict["store"] = None
         return user_dict
+    

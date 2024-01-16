@@ -1,6 +1,8 @@
 import bcrypt
 
-from typing import List, Optional
+from typing import List, Optional, Any
+
+from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
 
@@ -11,6 +13,7 @@ from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from sqlalchemy import func, and_, not_, inspect, update, delete, insert
 
 from app.models import users as models
+from app.models.stores import Store
 
 from app.schemas import users as schemas
 
@@ -40,10 +43,18 @@ def get_user(db, username: str):
     return db.query(models.User).filter(models.User.username == username).first()
 
 #✅
-def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[Optional[models.User]]:
+def get_users(
+    db: Session, 
+    skip: int = 0, 
+    limit: int = 100,
+    filter: Optional[dict] = None,
+    to_join: bool = False,
+    model_to_join: Optional[str] = None,
+    joined_model_filters: Optional[dict] = None
+    ) -> List[Optional[models.User]]:
     try:
         with UnitOfWork(db) as uow:
-            users = uow.users.get_users(skip, limit)
+            users = uow.users.get_users(skip, limit, filter, to_join, model_to_join, joined_model_filters)
             return [user.as_dict() for user in users]
     except Exception as e:
         return {"Status": "Failed", "Detail": "Error getting users"}
@@ -119,3 +130,13 @@ def deactivate_user(db: Session, user_id: int) -> models.User:
 
 def is_active(user: models.User) -> bool:
     return user.is_active
+
+
+def map_string_to_model(model_name: str) -> Any:
+    if model_name.lower() == "vehicle":
+        return Store
+    else:
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Model {model_name} not found"
+            )
