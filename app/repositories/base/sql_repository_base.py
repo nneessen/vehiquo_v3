@@ -20,6 +20,13 @@ class SqlRepositoryBase(Generic[T], ABC):
     
     @abstractmethod
     def _get_all(self, skip: int, limit: int, filter: Optional[dict] = None) -> List[T]:
+        """
+        Get all entities
+        @param skip: Number of entities to skip
+        @param limit: Maximum number of entities to return
+        @param filter: Filter to apply to query
+        @return: A list of entities
+        """
         raise NotImplementedError()
     
     @abstractmethod
