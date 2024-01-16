@@ -33,3 +33,7 @@ class Store(Base):
     
     users = relationship("User", backref="store", lazy="joined")
     units = relationship("Unit", backref="store", cascade='all, delete-orphan',lazy="joined")
+    
+    def as_dict(self):
+        store_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return store_dict

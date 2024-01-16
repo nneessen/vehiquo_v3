@@ -40,7 +40,7 @@ def get_units(db: Session,
             db_units = uow.units.get_all_units(skip, limit, filter, to_join, model_to_join, joined_model_filters)
             return [unit.as_dict() for unit in db_units]
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return {"Status": "Failed", "Detail": "Error getting units"}
 
 
 def get_store_units(db: Session, store_id: int, skip: int = 0, limit: int = 100) -> List[unit_model.Unit]:

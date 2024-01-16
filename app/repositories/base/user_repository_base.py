@@ -23,6 +23,10 @@ class UserRepositoryBase(SqlRepository[User], ABC):
         raise NotImplementedError()
     
     @abstractmethod
+    def get_users(self, skip: int, limit: int) -> List[User]:
+        raise NotImplementedError()
+    
+    @abstractmethod
     def update_user(self, user_id: int, user: User) -> User:
         raise NotImplementedError()
     

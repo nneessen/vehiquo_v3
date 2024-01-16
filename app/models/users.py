@@ -26,4 +26,10 @@ class User(Base):
     store_id = Column(Integer, ForeignKey("stores.id"))
     
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        user_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        
+        if self.store is not None:
+            user_dict["store"] = self.store.as_dict()
+        else:
+            user_dict["store"] = None
+        return user_dict

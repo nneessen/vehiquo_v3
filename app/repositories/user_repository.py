@@ -44,6 +44,14 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
             error_code = "user_get_error"
             raise GetUserException(message, error_code)
 
+    def get_users(self, skip: int, limit: int) -> List[User]:
+        try:
+            return super()._get_all(skip, limit)
+        except Exception as e:
+            message = f"Error getting users"
+            error_code = "user_get_all_error"
+            raise GetUserException(message, error_code)
+    
     def update_user(self, user: User, user_id: int) -> User:
         try:
             return super()._update(user, user_id)

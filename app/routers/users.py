@@ -1,4 +1,4 @@
-from typing import Any, Annotated
+from typing import Any, Annotated, List, Optional
 
 from datetime import timedelta
 
@@ -81,15 +81,15 @@ def get_user(user_id: int, db: Session = Depends(get_db)) -> schemas.UserOutput:
     return user
 
 
-@router.get("/users/", status_code=status.HTTP_200_OK)
-def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+@router.get("/users/", status_code=status.HTTP_200_OK, response_model=List[schemas.UserOutput])
+def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> schemas.UserOutput:
     users = user_service.get_users(db, skip=skip, limit=limit)
     if not users:
         raise HTTPException(
             status_code=404, 
             detail="No users found"
             )
-    return {"Status": "Success", "Users": users}
+    return users
 
 
 @router.delete("/users/{user_id}", status_code=status.HTTP_200_OK)

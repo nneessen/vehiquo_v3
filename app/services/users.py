@@ -41,14 +41,18 @@ def get_user(db, username: str):
 
 #✅
 def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[Optional[models.User]]:
-    return db.query(models.User).offset(skip).limit(limit).all()
+    try:
+        with UnitOfWork(db) as uow:
+            users = uow.users.get_users(skip, limit)
+            return [user.as_dict() for user in users]
+    except Exception as e:
+        return {"Status": "Failed", "Detail": "Error getting users"}
 
 #✅
 def get_user_by_id(db: Session, user_id: int) -> Optional[models.User]:
     try:
         with UnitOfWork(db) as uow:
             user = uow.users.get_user(user_id)
-            uow.commit()
             return user.as_dict()
     except Exception as e:
         return {"Status": "Failed", "Detail": f"Error getting user with id {user_id}"}
