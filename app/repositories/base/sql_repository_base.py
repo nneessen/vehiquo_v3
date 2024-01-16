@@ -19,5 +19,9 @@ class SqlRepositoryBase(Generic[T], ABC):
         raise NotImplementedError()
     
     @abstractmethod
+    def _get_all(self, skip: int, limit: int, filter: Optional[dict] = None) -> List[T]:
+        raise NotImplementedError()
+    
+    @abstractmethod
     def _update(self, entity: T, entity_id: int) -> T:
         raise NotImplementedError()

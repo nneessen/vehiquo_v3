@@ -19,7 +19,7 @@ from app.exceptions.custom_exceptions import (
 class UserRepository(UserRepositoryBase, SqlRepository[User]):
     def __init__(self, db: Session) -> None:
         super().__init__(db, User)
-        
+
     def add_user(self, user: User) -> User:
         try:
             return super()._add(user)
@@ -27,7 +27,7 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
             message = f"Error adding {user}"
             error_code = "user_add_error"
             raise AddUserException(message, error_code)
-        
+
     def delete_user(self, user_id: int) -> User:
         try:
             return super()._delete(user_id)
@@ -35,7 +35,7 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
             message = f"Error occured while deleting user with id {user_id}"
             error_code = "UserRepository.delete_user error"
             raise DeleteUserException(message, error_code)
-    
+
     def get_user(self, user_id: int) -> Optional[User]:
         try:
             return super()._get(user_id)
@@ -43,7 +43,7 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
             message = f"Error getting user with id {user_id}"
             error_code = "user_get_error"
             raise GetUserException(message, error_code)
-        
+
     def update_user(self, user: User, user_id: int) -> User:
         try:
             return super()._update(user, user_id)
@@ -51,4 +51,3 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
             message = f"Error updating user with id {user.id}"
             error_code = "user_update_error"
             raise UpdateUserException(message, error_code)
-        

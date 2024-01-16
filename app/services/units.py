@@ -15,33 +15,25 @@ from app.schemas import vehicles as vehicle_schema
 from app.unit_of_work.unit_of_work import UnitOfWork
 
 
+#✅
 def get_unit_by_id(db: Session, unit_id: int) -> Optional[unit_model.Unit]:
-    # gets unit along with the vehcile associated with it
-    with UnitOfWork(db) as uow:
-        db_unit = uow.units.get_unit(unit_id)
-        db_vehicle = uow.vehicles.get_vehicle(db_unit.vehicle_id) if db_unit.vehicle_id else None
-        db_unit.vehicle = db_vehicle
-        return db_unit.as_dict() if db_unit else None
+    try:
+        with UnitOfWork(db) as uow:
+            db_unit = uow.units.get_unit(unit_id)
+            db_vehicle = uow.vehicles.get_vehicle(db_unit.vehicle_id) if db_unit.vehicle_id else None
+            db_unit.vehicle = db_vehicle
+            return db_unit.as_dict() if db_unit else None
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
-    
-
-
-def get_units(db: Session, skip: int = 0, limit: int = 100) -> List[unit_schema.UnitOutput]:
-    """
-    Get all units
-    @param db: SQLAlchemy database session
-    @param skip: Number of units to skip
-    @param limit: Maximum number of units to return
-    @return: A list of units
-    """
-    units = db.query(unit_model.Unit).offset(skip).limit(limit).all()
-    unit_outputs = []
-    for unit in units:
-        vehicle_data = vehicle_schema.VehicleOutput.model_validate(unit.vehicle) if unit.vehicle else None
-        unit_data = unit_schema.UnitOutput.model_validate(unit)
-        unit_data.vehicle = vehicle_data
-        unit_outputs.append(unit_data)
-    return unit_outputs
+#✅
+def get_units(db: Session, skip: int = 0, limit: int = 100, filter: Optional[dict] = None) -> List[unit_model.Unit]:
+    try:
+        with UnitOfWork(db) as uow:
+            db_units = uow.units.get_all_units(skip, limit, filter)
+            return [unit.as_dict() for unit in db_units]
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 def get_store_units(db: Session, store_id: int, skip: int = 0, limit: int = 100) -> List[unit_model.Unit]:

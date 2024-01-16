@@ -35,11 +35,25 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
 #
     def _get(self, entity_id: int) -> Optional[T]:
         try:
-            entity = self.db.query(self.model).where(self.model.id==entity_id).first()
+            stmt = select(self.model).where(self.model.id==entity_id)
+            entity = self.db.execute(stmt).scalar()
             return entity
         except Exception as e:
             self.db.rollback()
             raise e
+
+    def _get_all(self, skip: int, limit: int, filter: Optional[dict] = None) -> List[T]:
+        try:
+            stmt = select(self.model).offset(skip).limit(limit)
+            if filter:
+                stmt = stmt.filter_by(**filter)
+            entities = self.db.execute(stmt).scalars().all()
+            return entities
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+
 
     def _update(self, entity: T, entity_id: int) -> T:
         try:

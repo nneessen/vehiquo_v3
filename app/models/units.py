@@ -53,7 +53,6 @@ class Unit(Base):
     added_by = Column(Integer, ForeignKey("users.id"))
 
     def as_dict(self):
-        # return dict with vehicle relationship
         unit_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
         if self.vehicle is not None:

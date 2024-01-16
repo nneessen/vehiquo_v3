@@ -43,6 +43,14 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
             message = f"Error getting unit with id {unit_id}"
             error_code = "unit_get_error"
             raise DeleteUnitException(message, error_code)
+        
+    def get_all_units(self, skip: int, limit: int, filter: Optional[dict] = None) -> List[Unit]:
+        try:
+            return super()._get_all(skip, limit, filter)
+        except Exception as e:
+            message = f"Error getting all units"
+            error_code = "unit_get_all_error"
+            raise DeleteUnitException(message, error_code)
 
     def update_unit(self, unit: Unit, unit_id: int) -> Unit:
         try:
