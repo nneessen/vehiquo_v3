@@ -150,3 +150,12 @@ def add_vehicle_to_unit(db: Session, vehicle_id: int, unit_id: int) -> unit_mode
     db.commit()
     db.refresh(db_unit)
     return db_unit
+
+def map_string_to_model(model_name: str) -> Any:
+    if model_name.lower() == "vehicle":
+        return vehicle_model.Vehicle
+    else:
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Model {model_name} not found"
+            )

@@ -28,14 +28,17 @@ class SqlRepositoryBase(Generic[T], ABC):
         joined_model_filters: Optional[dict] = None
         ) -> List[T]:
         """
-        Get all entities
-        @param skip: Number of entities to skip
-        @param limit: Maximum number of entities to return
-        @param filter: Filter to apply to query
-        @param to_join: Whether to join tables or not
-        @param model_to_join: Model to join with
-        @param joined_model_filters: Filters to apply to joined model
-        @return: A list of entities
+        This method is used to get all rows from a table in the database with the option to apply filters and joins
+        
+        Args:
+            skip (int): Number of rows to skip
+            limit (int): Maximum number of rows to return
+            filter (Optional[dict], optional): Dictionary of filters to apply. Defaults to None.
+            to_join (bool, optional): Whether to join another table. Defaults to False.
+            model_to_join (Optional[T], optional): The model to join. Defaults to None.
+            joined_model_filters (Optional[dict], optional): Filters to apply to the joined table. Defaults to None.
+        Returns:
+            List[T]: A list of rows from the database
         """
         raise NotImplementedError()
     
