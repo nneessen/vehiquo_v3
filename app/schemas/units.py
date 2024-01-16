@@ -59,9 +59,7 @@ class UnitOutput(UnitBase):
     added_by: int | None = None
 
     vehicle: vehicles_schema.VehicleOutput | None = None
-    
 
-        
 
 class Unit(UnitBase):
     store_id: int

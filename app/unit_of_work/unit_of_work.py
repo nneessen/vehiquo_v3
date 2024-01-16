@@ -75,7 +75,6 @@ class UnitOfWork(UnitOfWorkBase):
     
     def commit(self):
         self.db.commit()
-        print("UnitOfWork.commit() called")
         
     def rollback(self):
         self.db.rollback()

@@ -16,13 +16,14 @@ from app.unit_of_work.unit_of_work import UnitOfWork
 
 
 def get_unit_by_id(db: Session, unit_id: int) -> Optional[unit_model.Unit]:
-    """
-    Get a unit by ID
-    @param db: SQLAlchemy database session
-    @param unit_id: ID of the unit to get
-    @return: The unit with the given ID
-    """
-    return db.query(unit_model.Unit).filter(unit_model.Unit.id == unit_id).first()
+    # gets unit along with the vehcile associated with it
+    with UnitOfWork(db) as uow:
+        db_unit = uow.units.get_unit(unit_id)
+        db_vehicle = uow.vehicles.get_vehicle(db_unit.vehicle_id) if db_unit.vehicle_id else None
+        db_unit.vehicle = db_vehicle
+        return db_unit.as_dict() if db_unit else None
+
+    
 
 
 def get_units(db: Session, skip: int = 0, limit: int = 100) -> List[unit_schema.UnitOutput]:

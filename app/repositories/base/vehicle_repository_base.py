@@ -16,3 +16,7 @@ class VehicleRepositoryBase(SqlRepository[Vehicle], ABC):
     @abstractmethod
     def delete_vehicle(self, vehicle_id: int) -> Vehicle:
         raise NotImplementedError()
+    
+    @abstractmethod
+    def get_vehicle(self, vehicle_id: int) -> Optional[Vehicle]:
+        raise NotImplementedError()

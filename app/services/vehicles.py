@@ -6,15 +6,12 @@ from datetime import datetime
 from app.models import vehicles as models
 from app.schemas import vehicles as schemas
 
+from app.unit_of_work.unit_of_work import UnitOfWork
 
 def get_vehicle_by_id(db: Session, vehicle_id: int) -> Optional[models.Vehicle]:
-    """
-    Get a vehicle by ID
-    @param db: SQLAlchemy database session
-    @param vehicle_id: ID of the vehicle to get
-    @return: The vehicle with the given ID
-    """
-    return db.query(models.Vehicle).filter(models.Vehicle.id == vehicle_id).first()
+    with UnitOfWork(db) as uow:
+        db_vehicle = uow.vehicles.get_vehicle(vehicle_id)
+        return db_vehicle.as_dict() if db_vehicle else None
 
 
 def get_vehicles(db: Session, skip: int = 0, limit: int = 100) -> List[models.Vehicle]:

@@ -18,3 +18,6 @@ class VehicleRepository(VehicleRepositoryBase, SqlRepository[Vehicle]):
     
     def delete_vehicle(self, vehicle_id: int) -> Vehicle:
         return super()._delete(vehicle_id)
+    
+    def get_vehicle(self, vehicle_id: int) -> Optional[Vehicle]:
+        return super()._get(vehicle_id)

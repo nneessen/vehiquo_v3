@@ -18,7 +18,7 @@ from app.utils.decorators import timeit
 
 from app.unit_of_work.unit_of_work import UnitOfWork
 
-
+#✅
 def authenticate_user(db: Session, username: str, password: str) -> Optional[models.User]:
     user = get_user(db, username=username)
     if not user:
@@ -27,18 +27,23 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[mod
         return None
     return user
 
+#✅
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
+#✅
 def verify_password(password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(password.encode("utf-8"), hashed_password.encode("utf-8"))
 
+#✅
 def get_user(db, username: str):
     return db.query(models.User).filter(models.User.username == username).first()
 
+#✅
 def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[Optional[models.User]]:
     return db.query(models.User).offset(skip).limit(limit).all()
 
+#✅
 def get_user_by_id(db: Session, user_id: int) -> Optional[models.User]:
     try:
         with UnitOfWork(db) as uow:
@@ -61,24 +66,6 @@ def confirm(db: Session, user: models.User) -> models.User:
     db.refresh(user)
     return user
 
-"""
-    hashed_password = hash_password(user.password)
-    user_data = user.model_dump(exclude={"password"})
-    user_data["hashed_password"] = hashed_password
-    try:
-        with UnitOfWork(db) as uow:
-            uow.users.add_user(user_data)
-            uow.commit()
-    except (IntegrityError, InvalidRequestError, FlushError) as e:
-        error_details = {
-            IntegrityError: "Email or username already registered",
-            InvalidRequestError: "Invalid request",
-            FlushError: "Flush error"
-        }
-        detail = error_details.get(type(e), "Unknown error")
-        raise HTTPException(status_code=400, detail=detail)
-    return get_user_by_email(db, email=user.email)
-"""
 
 #✅ Takes 0.1808s to create user
 def create_user(db: Session, user: schemas.UserCreate) -> models.User:
@@ -99,7 +86,6 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     return get_user_by_email(db, email=user.email)
 
 #✅ Takes 0.0093s to delete user
-@timeit
 def delete_user(db: Session, user_id: int) -> None:
     user = get_user_by_id(db, user_id=user_id)
     if not user:
