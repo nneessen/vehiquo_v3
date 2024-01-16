@@ -4,9 +4,9 @@ from sqlalchemy.orm import Session
 
 from sqlalchemy import select, and_
 
-from app.repositories.sql_repository import SqlRepository
+from app.repositories.base.sql_repository import SqlRepository
 
-from app.repositories.base.unit_repository_base import UnitRepositoryBase
+from app.repositories.units.unit_repository_base import UnitRepositoryBase
 
 from app.models.units import Unit
 from app.models.vehicles import Vehicle

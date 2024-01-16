@@ -31,3 +31,19 @@ class UpdateUserException(CustomException):
 
 class GetUserException(CustomException):
     pass
+
+#########################################################
+#^################## STORE EXCEPTIONS ####################
+#########################################################
+
+class AddStoreException(CustomException):
+    pass
+
+class DeleteStoreException(CustomException):
+    pass
+
+class UpdateStoreException(CustomException):
+    pass
+
+class GetStoreException(CustomException):
+    pass

@@ -2,11 +2,11 @@ from typing import Optional, List
 
 from sqlalchemy.orm import Session
 
-from app.repositories.sql_repository import SqlRepository
+from app.repositories.base.sql_repository import SqlRepository
 
 from app.models.vehicles import Vehicle
 
-from app.repositories.base.vehicle_repository_base import VehicleRepositoryBase
+from app.repositories.vehicles.vehicle_repository_base import VehicleRepositoryBase
     
 
 class VehicleRepository(VehicleRepositoryBase, SqlRepository[Vehicle]):

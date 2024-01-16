@@ -7,10 +7,9 @@ from sqlalchemy import select, and_
 
 from app.logging_config import setup_logging
 
-
-from app.repositories.user_repository import UserRepositoryBase, UserRepository
-from app.repositories.vehicle_repository import VehicleRepositoryBase, VehicleRepository
-from app.repositories.unit_repository import UnitRepositoryBase, UnitRepository
+from app.repositories.units import unit_repository_base, unit_repository
+from app.repositories.users import user_repository_base, user_repository
+from app.repositories.vehicles import vehicle_repository_base, vehicle_repository
 
 
 
@@ -19,9 +18,9 @@ logger = logging.getLogger(__name__)
 
 
 class UnitOfWorkBase(ABC):
-    users: UserRepositoryBase
-    units: UnitRepositoryBase
-    vehicles: VehicleRepositoryBase
+    users: user_repository_base.UserRepositoryBase
+    units: unit_repository_base.UnitRepositoryBase
+    vehicles: vehicle_repository_base.VehicleRepositoryBase
     
     def __enter__(self):
         return self
@@ -56,21 +55,21 @@ class UnitOfWork(UnitOfWorkBase):
         self.db.close()
     
     @property
-    def users(self) -> UserRepositoryBase:
+    def users(self) -> user_repository_base.UserRepositoryBase:
         if self._users is None:
-            self._users = UserRepository(self.db)
+            self._users = user_repository.UserRepository(self.db)
         return self._users
     
     @property
-    def units(self) -> UnitRepositoryBase:
+    def units(self) -> unit_repository_base.UnitRepositoryBase:
         if self._units is None:
-            self._units = UnitRepository(self.db)
+            self._units = unit_repository.UnitRepository(self.db)
         return self._units
     
     @property
-    def vehicles(self) -> VehicleRepositoryBase:
+    def vehicles(self) -> vehicle_repository_base.VehicleRepositoryBase:
         if self._vehicles is None:
-            self._vehicles = VehicleRepository(self.db)
+            self._vehicles = vehicle_repository.VehicleRepository(self.db)
         return self._vehicles
     
     def commit(self):

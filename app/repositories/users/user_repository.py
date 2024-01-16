@@ -2,11 +2,11 @@ from typing import Optional, List
 
 from sqlalchemy.orm import Session
 
-from app.repositories.sql_repository import SqlRepository
+from app.repositories.base.sql_repository import SqlRepository
 
 from app.models.users import User
 
-from app.repositories.base.user_repository_base import UserRepositoryBase
+from app.repositories.users.user_repository_base import UserRepositoryBase
 
 from app.exceptions.custom_exceptions import (
     AddUserException, 

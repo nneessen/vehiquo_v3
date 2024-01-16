@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from typing import Optional, List
 
-from app.repositories.sql_repository import SqlRepository
+from app.repositories.base.sql_repository import SqlRepository
 
 from app.models.vehicles import Vehicle
 
