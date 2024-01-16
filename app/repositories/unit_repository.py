@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Any
 
 from sqlalchemy.orm import Session
 
@@ -9,6 +9,7 @@ from app.repositories.sql_repository import SqlRepository
 from app.repositories.base.unit_repository_base import UnitRepositoryBase
 
 from app.models.units import Unit
+from app.models.vehicles import Vehicle
 
 from app.exceptions.custom_exceptions import (
     DeleteUnitException,
@@ -44,9 +45,16 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
             error_code = "unit_get_error"
             raise DeleteUnitException(message, error_code)
         
-    def get_all_units(self, skip: int, limit: int, filter: Optional[dict] = None) -> List[Unit]:
+    def get_all_units(self, 
+        skip: int, 
+        limit: int, 
+        filter: Optional[dict] = None, 
+        to_join: bool = False, 
+        model_to_join: Optional[Any] = None,
+        joined_model_filters: Optional[dict] = None
+        ) -> List[Unit]:
         try:
-            return super()._get_all(skip, limit, filter)
+            return super()._get_all(skip, limit, filter, to_join, model_to_join, joined_model_filters)
         except Exception as e:
             message = f"Error getting all units"
             error_code = "unit_get_all_error"

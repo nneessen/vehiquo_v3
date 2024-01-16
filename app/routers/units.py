@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
 
+from app.models.vehicles import Vehicle
+
 from app.schemas import units as units_schema
 from app.schemas import vehicles as vehicles_schema
 
@@ -36,7 +38,12 @@ def create_unit(unit: units_schema.UnitAdd, vehicle: vehicles_schema.VehicleAdd,
 #✅
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[units_schema.UnitOutput])
 def get_units(db: Session = Depends(get_db)) -> units_schema.UnitOutput:
-    units = unit_service.get_units(db)
+    units = unit_service.get_units(
+        db,
+        to_join=True,
+        model_to_join=Vehicle,
+        joined_model_filters={"make": "mazda"}
+        )
     if not units:
         raise HTTPException(
             status_code=404, 

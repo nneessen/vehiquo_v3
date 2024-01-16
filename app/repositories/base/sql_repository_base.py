@@ -19,12 +19,22 @@ class SqlRepositoryBase(Generic[T], ABC):
         raise NotImplementedError()
     
     @abstractmethod
-    def _get_all(self, skip: int, limit: int, filter: Optional[dict] = None) -> List[T]:
+    def _get_all(self, 
+        skip: int, 
+        limit: int, 
+        filter: Optional[dict] = None, 
+        to_join: bool = False, 
+        model_to_join: Optional[T] = None,
+        joined_model_filters: Optional[dict] = None
+        ) -> List[T]:
         """
         Get all entities
         @param skip: Number of entities to skip
         @param limit: Maximum number of entities to return
         @param filter: Filter to apply to query
+        @param to_join: Whether to join tables or not
+        @param model_to_join: Model to join with
+        @param joined_model_filters: Filters to apply to joined model
         @return: A list of entities
         """
         raise NotImplementedError()

@@ -1,6 +1,6 @@
 import time
 
-from typing import Optional, List
+from typing import Optional, List, Any
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import joinedload
 from fastapi import HTTPException
@@ -27,10 +27,17 @@ def get_unit_by_id(db: Session, unit_id: int) -> Optional[unit_model.Unit]:
         raise HTTPException(status_code=400, detail=str(e))
 
 #✅
-def get_units(db: Session, skip: int = 0, limit: int = 100, filter: Optional[dict] = None) -> List[unit_model.Unit]:
+def get_units(db: Session, 
+    skip: int = 0, 
+    limit: int = 100, 
+    filter: Optional[dict] = None,
+    to_join: bool = False,
+    model_to_join: Optional[Any] = None,
+    joined_model_filters: Optional[dict] = None
+    ) -> List[unit_model.Unit]:
     try:
         with UnitOfWork(db) as uow:
-            db_units = uow.units.get_all_units(skip, limit, filter)
+            db_units = uow.units.get_all_units(skip, limit, filter, to_join, model_to_join, joined_model_filters)
             return [unit.as_dict() for unit in db_units]
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from typing import Optional, List
+from typing import Optional, List, Any
 
 from app.repositories.sql_repository import SqlRepository
 
@@ -19,6 +19,17 @@ class UnitRepositoryBase(SqlRepository[Unit], ABC):
     
     @abstractmethod
     def get_unit(self, entity_id: int) -> Optional[Unit]:
+        raise NotImplementedError()
+    
+    @abstractmethod
+    def get_all_units(self, 
+        skip: int, 
+        limit: int, 
+        filter: Optional[dict] = None, 
+        to_join: bool = False, 
+        model_to_join: Optional[Any] = None,
+        joined_model_filters: Optional[dict] = None
+        ) -> List[Unit]:
         raise NotImplementedError()
     
     @abstractmethod

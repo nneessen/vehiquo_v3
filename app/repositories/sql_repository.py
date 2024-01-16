@@ -42,11 +42,23 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
             self.db.rollback()
             raise e
 
-    def _get_all(self, skip: int, limit: int, filter: Optional[dict] = None) -> List[T]:
+    def _get_all(self, 
+        skip: int, 
+        limit: int, 
+        filter: Optional[dict] = None,
+        to_join: bool = False,
+        model_to_join: Optional[T] = None,
+        joined_model_filters: Optional[dict] = None
+        ) -> List[T]:
         try:
             stmt = select(self.model).offset(skip).limit(limit)
             if filter:
                 stmt = stmt.filter_by(**filter)
+            if to_join:
+                stmt = stmt.join(model_to_join)
+                if joined_model_filters:
+                    stmt = stmt.filter_by(**joined_model_filters)
+
             entities = self.db.execute(stmt).scalars().all()
             return entities
         except Exception as e:
