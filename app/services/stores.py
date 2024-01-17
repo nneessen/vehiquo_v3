@@ -26,15 +26,22 @@ def create_store(db: Session, store: store_schema.StoreCreate) -> store_model.St
         return {"Status": "Error", "Message": f"Error creating store: {e}"}
 
 
+def delete_store(db: Session, store_id: int) -> store_model.Store:
+    try:
+        with UnitOfWork(db) as uow:
+            store = uow.stores.delete_store(store_id)
+            uow.commit()
+            return store
+    except Exception as e:
+        return {"Status": "Error", "Message": f"Error deleting store: {e}"}
+
+
 def get_store_by_id(db: Session, store_id: int) -> Optional[store_model.Store]:
     return db.query(store_model.Store).filter(store_model.Store.id == store_id).first()
 
 
 def get_stores(db: Session, skip: int = 0, limit: int = 100) -> list[store_model.Store]:
     return db.query(store_model.Store).offset(skip).limit(limit).all()
-
-
-
 
 
 def update_store(db: Session, store_id: int, store: store_schema.StoreUpdate) -> store_model.Store:
@@ -50,14 +57,5 @@ def update_store(db: Session, store_id: int, store: store_schema.StoreUpdate) ->
         raise e
 
 
-def delete_store(db: Session, store_id: int) -> store_model.Store:
-    db_store = db.query(store_model.Store).filter(store_model.Store.id == store_id).first()
-
-    if db_store is None:
-        raise HTTPException(status_code=404, detail="Store not found")
-
-    db.delete(db_store)
-    db.commit()
-    return db_store
 
 

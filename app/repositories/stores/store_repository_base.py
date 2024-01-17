@@ -10,5 +10,9 @@ from app.models.stores import Store
 class StoreRepositoryBase(SqlRepository[Store], ABC):
     
     @abstractmethod
-    def add_store(self, entity: Store) -> Store:
+    def add_store(self, entity: Store) -> Optional[Store]:
+        raise NotImplementedError()
+    
+    @abstractmethod
+    def delete_store(self, entity_id: int) -> Optional[Store]:
         raise NotImplementedError()

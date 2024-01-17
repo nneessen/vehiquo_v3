@@ -35,6 +35,16 @@ def create_store(
     return db_store
 
 
+@router.delete("/{store_id}", response_model=None)
+def delete_store(store_id: int, db: Session = Depends(get_db)) -> Optional[stores_schema.StoreOutput]:
+    db_store = store_service.get_store_by_id(db, store_id)
+    if not db_store:
+        return {"Status": "Failure", "Message": f"Store with {store_id} does not exist"}
+    store_service.delete_store(db, store_id)
+    return {"Status": "Success", "Message": f"Store with {store_id} has bee successfully deleted!"}
+    
+
+
 @router.get("/", status_code=status.HTTP_200_OK, response_model=list[stores_schema.StoreOutput])
 def get_stores(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> list[stores_schema.StoreOutput]:
     stores = store_service.get_stores(db, skip=skip, limit=limit)
@@ -52,17 +62,7 @@ def get_store(store_id: int, db: Session = Depends(get_db)) -> stores_schema.Sto
     return {"Status": "Success", "Store": store}
 
 
-@router.delete("/{store_id}", response_model=stores_schema.StoreOutput)
-def delete_store(store_id: int, db: Session = Depends(get_db)) -> stores_schema.StoreOutput:
-    with UnitOfWork(db) as uow:
-        try:
-            db_store = store_service.delete_store(db, store_id=store_id)
-            if db_store is None:
-                raise HTTPException(status_code=404, detail="Store not found")
-            return {"Status": "Success", "Store": db_store}
-        except Exception as e:
-            uow.rollback()
-            raise e
+
 
 
 @router.put("/{store_id}", response_model=stores_schema.StoreOutput)
