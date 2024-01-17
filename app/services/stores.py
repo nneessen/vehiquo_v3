@@ -37,7 +37,13 @@ def delete_store(db: Session, store_id: int) -> store_model.Store:
 
 
 def get_store_by_id(db: Session, store_id: int) -> Optional[store_model.Store]:
-    return db.query(store_model.Store).filter(store_model.Store.id == store_id).first()
+    try:
+        with UnitOfWork(db) as uow:
+            store = uow.stores.get_store(store_id)
+            return store.as_dict() if store else None
+    except Exception as e:
+        return {"Status": "Error", "Message": f"Error finding store with id of {store_id}"}
+        
 
 
 def get_stores(db: Session, skip: int = 0, limit: int = 100) -> list[store_model.Store]:

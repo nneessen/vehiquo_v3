@@ -16,3 +16,7 @@ class StoreRepositoryBase(SqlRepository[Store], ABC):
     @abstractmethod
     def delete_store(self, entity_id: int) -> Optional[Store]:
         raise NotImplementedError()
+    
+    @abstractmethod
+    def get_store(self, entity_id: int) -> Optional[Store]:
+        raise NotImplementedError()

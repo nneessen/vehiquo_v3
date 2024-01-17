@@ -38,3 +38,11 @@ class StoreRepository(StoreRepositoryBase, SqlRepository[Store]):
             message = f"Error deleting store with id {store_id}"
             error_code = "store_delete_error"
             raise DeleteStoreException(message, error_code)
+    
+    def get_store(self, store_id: int) -> Optional[Store]:
+        try:
+            return super()._get(store_id)
+        except Exception as e:
+            message = f"Error getting store with id {store_id}"
+            error_code = "store_get_error"
+            raise GetStoreException(message, error_code)

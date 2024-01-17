@@ -44,13 +44,6 @@ def delete_store(store_id: int, db: Session = Depends(get_db)) -> Optional[store
     return {"Status": "Success", "Message": f"Store with {store_id} has bee successfully deleted!"}
     
 
-
-@router.get("/", status_code=status.HTTP_200_OK, response_model=list[stores_schema.StoreOutput])
-def get_stores(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> list[stores_schema.StoreOutput]:
-    stores = store_service.get_stores(db, skip=skip, limit=limit)
-    return {"Status": "Success", "Stores": stores}
-
-
 @router.get("/{store_id}", status_code=status.HTTP_200_OK, response_model=stores_schema.StoreOutput)
 def get_store(store_id: int, db: Session = Depends(get_db)) -> stores_schema.StoreOutput:
     store = store_service.get_store_by_id(db, store_id=store_id)
@@ -59,7 +52,15 @@ def get_store(store_id: int, db: Session = Depends(get_db)) -> stores_schema.Sto
             status_code=404, 
             detail=f"Store with id {store_id} not found"
             )
-    return {"Status": "Success", "Store": store}
+    return store
+
+
+@router.get("/", status_code=status.HTTP_200_OK, response_model=list[stores_schema.StoreOutput])
+def get_stores(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> list[stores_schema.StoreOutput]:
+    stores = store_service.get_stores(db, skip=skip, limit=limit)
+    return {"Status": "Success", "Stores": stores}
+
+
 
 
 
