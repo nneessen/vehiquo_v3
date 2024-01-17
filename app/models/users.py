@@ -28,9 +28,6 @@ class User(Base):
     def as_dict(self):
         user_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         
-        if self.store is not None:
-            user_dict["store"] = self.store.as_dict()
-        else:
-            user_dict["store"] = None
+        user_dict["store"] = self.store.as_dict() if self.store is not None else None
+
         return user_dict
-    

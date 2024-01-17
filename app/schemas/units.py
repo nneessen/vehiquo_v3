@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from app.schemas import vehicles as vehicles_schema
 from app.schemas import stores as stores_schema
+from app.schemas import users as users_schema
 
 class UnitBase(BaseModel):
     list_date: datetime | None = datetime.utcnow()
@@ -76,6 +77,7 @@ class UnitCreateOutput(BaseModel):
 
     vehicle: vehicles_schema.VehicleOutput | None = None
     store: stores_schema.StoreOutput | None = None
+    user: users_schema.UserOutput | None = None
 
 
 class Unit(UnitBase):

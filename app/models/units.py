@@ -13,8 +13,6 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 
 
-
-
 class Unit(Base):
     __tablename__ = "units"
 
@@ -55,13 +53,7 @@ class Unit(Base):
     def as_dict(self):
         unit_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-        if self.vehicle is not None:
-            unit_dict["vehicle"] = self.vehicle.as_dict()
-        else:
-            unit_dict["vehicle"] = None
-            
-        if self.store is not None:
-            unit_dict["store"] = self.store.as_dict()
-        else:
-            unit_dict["store"] = None
+        unit_dict["vehicle"] = self.vehicle.as_dict() if self.vehicle is not None else None
+        unit_dict["store"] = self.store.as_dict() if self.store is not None else None
         return unit_dict
+
