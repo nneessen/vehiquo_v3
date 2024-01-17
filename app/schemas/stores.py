@@ -30,8 +30,17 @@ class StoreDelete(StoreBase):
     pass
 
 
-class StoreOutput(StoreBase):
+class StoreOutput(BaseModel):
     id : int | None = None
+    name: str | None = None
+    street_address: str | None = None
+    city: str | None = None
+    state: str | None = None
+    zip_code: int | None = None
+    phone: str | None = None
+    admin_clerk_1: str | None = None
+    is_primary_hub: bool | None = None
+    qb_customer_id: int | None = None
 
 
 class Store(StoreBase):

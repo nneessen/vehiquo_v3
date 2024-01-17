@@ -19,19 +19,19 @@ from app.routers.security.dependencies import oauth2_scheme
 
 router = APIRouter(prefix="/units", tags=["Units"])
 
-#✅ TEST ROUTE
-@router.get("/test/", response_model=units_schema.UnitOutput)
-async def read_units(token: Annotated[str, Depends(oauth2_scheme)]) -> Any:
-    return {"token": token }
-
 
 #✅
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=units_schema.UnitOutput)
-def create_unit(unit: units_schema.UnitAdd, vehicle: vehicles_schema.VehicleAdd, db: Session = Depends(get_db)) -> units_schema.UnitOutput:
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=units_schema.UnitCreateOutput)
+def create_unit(
+    unit: units_schema.UnitAdd, 
+    vehicle: vehicles_schema.VehicleAdd, 
+    db: Session = Depends(get_db)) -> units_schema.UnitCreateOutput:
+
     db_unit = unit_service.create_unit(db, unit=unit, vehicle=vehicle)
+
     if db_unit is None:
         raise HTTPException(status_code=404, detail="Unit not found")
-    return {"Status": "Success", "Unit": db_unit}
+    return db_unit
 
 
 

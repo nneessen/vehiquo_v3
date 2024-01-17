@@ -15,6 +15,19 @@ from app.schemas import vehicles as vehicle_schema
 from app.unit_of_work.unit_of_work import UnitOfWork
 
 
+def create_unit(db: Session, unit: unit_schema.UnitAdd, vehicle: vehicle_schema.VehicleAdd) -> unit_model.Unit:
+    try:
+        with UnitOfWork(db) as uow:
+            db_unit = uow.units.add_unit(unit)
+            db_vehicle = uow.vehicles.add_vehicle(vehicle)
+            db_unit.vehicle_id = db_vehicle.id
+            uow.commit()
+            uow.refresh(db_unit)
+            return db_unit.as_dict() if db_unit else None
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 #✅
 def get_unit_by_id(db: Session, unit_id: int) -> Optional[unit_model.Unit]:
     try:
@@ -54,23 +67,7 @@ def get_store_units(db: Session, store_id: int, skip: int = 0, limit: int = 100)
     """
     return db.query(unit_model.Unit).filter(unit_model.Unit.store_id == store_id).offset(skip).limit(limit).all()
 
-def create_unit(db: Session, unit: unit_schema.UnitAdd, vehicle: vehicle_schema.VehicleAdd) -> unit_model.Unit:
-    """✅
-    Create a new unit
-    @param db: SQLAlchemy database session
-    @param unit: Unit to create
-    @return: The created unit
-    """
-    try:
-        with UnitOfWork(db) as uow:
-            db_unit = uow.units.add_unit(unit)
-            db_vehicle = uow.vehicles.add_vehicle(vehicle)
-            db_unit.vehicle_id = db_vehicle.id
-            db.commit()
-            db.refresh(db_unit)
-            return db_unit
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+
 
 def delete_unit(db: Session, unit_id: int) -> unit_model.Unit:
     """✅

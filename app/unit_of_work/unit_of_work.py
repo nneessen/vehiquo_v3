@@ -3,13 +3,13 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Callable
 from sqlalchemy.orm import Session
-from sqlalchemy import select, and_
 
 from app.logging_config import setup_logging
 
 from app.repositories.units import unit_repository_base, unit_repository
 from app.repositories.users import user_repository_base, user_repository
 from app.repositories.vehicles import vehicle_repository_base, vehicle_repository
+from app.repositories.stores import store_repository_base, store_repository
 
 
 
@@ -21,6 +21,7 @@ class UnitOfWorkBase(ABC):
     users: user_repository_base.UserRepositoryBase
     units: unit_repository_base.UnitRepositoryBase
     vehicles: vehicle_repository_base.VehicleRepositoryBase
+    stores: store_repository_base.StoreRepositoryBase
     
     def __enter__(self):
         return self
@@ -31,6 +32,10 @@ class UnitOfWorkBase(ABC):
         else:
             self.rollback()
         
+    @abstractmethod
+    def refresh(self, entity):
+        raise NotImplementedError()
+    
     @abstractmethod
     def commit(self):
         raise NotImplementedError()
@@ -46,7 +51,8 @@ class UnitOfWork(UnitOfWorkBase):
         self._users = None
         self._units = None
         self._vehicles = None
-    
+        self._stores = None
+        
     def __enter__(self):
         return super().__enter__()
     
@@ -71,6 +77,15 @@ class UnitOfWork(UnitOfWorkBase):
         if self._vehicles is None:
             self._vehicles = vehicle_repository.VehicleRepository(self.db)
         return self._vehicles
+    
+    @property
+    def stores(self) -> store_repository_base.StoreRepositoryBase:
+        if self._stores is None:
+            self._stores = store_repository.StoreRepository(self.db)
+        return self._stores
+    
+    def refresh(self, entity):
+        self.db.refresh(entity)
     
     def commit(self):
         self.db.commit()

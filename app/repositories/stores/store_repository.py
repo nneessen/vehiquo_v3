@@ -17,3 +17,16 @@ from app.exceptions.custom_exceptions import (
     UpdateStoreException, 
     GetStoreException
 )
+
+
+class StoreRepository(StoreRepositoryBase, SqlRepository[Store]):
+    def __init__(self, db: Session) -> None:
+        super().__init__(db, Store)
+        
+    def add_store(self, store: Store) -> Store:
+        try:
+            return super()._add(store)
+        except Exception as e:
+            message = f"Error adding store with id {store.id}"
+            error_code = "store_add_error"
+            raise AddStoreException(message, error_code)

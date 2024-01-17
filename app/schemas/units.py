@@ -1,7 +1,9 @@
 from pydantic import BaseModel, Field, ConfigDict, field_serializer, model_serializer
 from typing import Any, Dict
 from datetime import datetime, timedelta
+
 from app.schemas import vehicles as vehicles_schema
+from app.schemas import stores as stores_schema
 
 class UnitBase(BaseModel):
     list_date: datetime | None = datetime.utcnow()
@@ -59,6 +61,21 @@ class UnitOutput(UnitBase):
     added_by: int | None = None
 
     vehicle: vehicles_schema.VehicleOutput | None = None
+
+
+class UnitCreateOutput(BaseModel):
+    id: int | None = None
+    purchase_price: int | None = None
+    transportation_fee: int | None = None
+    purchased: bool | None = None
+    retailWholesale: str | None = None
+    buy_now_price: int | None = None
+    buy_fee: int | None = None
+    purchased_by: int | None = None
+    added_by: int | None = None
+
+    vehicle: vehicles_schema.VehicleOutput | None = None
+    store: stores_schema.StoreOutput | None = None
 
 
 class Unit(UnitBase):

@@ -1,3 +1,5 @@
+from typing import Optional, List, Any, Annotated, Union, Literal
+
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from sqlalchemy.orm import Session
@@ -17,12 +19,20 @@ from app.services import units as unit_service
 router = APIRouter(prefix="/stores", tags=["Stores"])
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=stores_schema.StoreOutput)
-def create_store(store: stores_schema.StoreCreate, db: Session = Depends(get_db)) -> stores_schema.StoreOutput:
+@router.post(
+    "/", 
+    status_code=status.HTTP_201_CREATED,
+    response_model=stores_schema.StoreOutput
+)
+def create_store(
+    store: stores_schema.StoreCreate, 
+    db: Session = Depends(get_db)) -> stores_schema.StoreOutput:
+
     db_store = store_service.create_store(db, store=store)
+
     if db_store is None:
         raise HTTPException(status_code=404, detail="Store not found")
-    return {"Status": "Success", "Store": db_store}
+    return db_store
 
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=list[stores_schema.StoreOutput])

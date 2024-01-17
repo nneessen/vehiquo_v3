@@ -59,4 +59,9 @@ class Unit(Base):
             unit_dict["vehicle"] = self.vehicle.as_dict()
         else:
             unit_dict["vehicle"] = None
+            
+        if self.store is not None:
+            unit_dict["store"] = self.store.as_dict()
+        else:
+            unit_dict["store"] = None
         return unit_dict
