@@ -1,20 +1,13 @@
-import logging
-
 from abc import ABC, abstractmethod
-from typing import Callable
-from sqlalchemy.orm import Session
 
-from app.logging_config import setup_logging
+from typing import Callable
+
+from sqlalchemy.orm import Session
 
 from app.repositories.units import unit_repository_base, unit_repository
 from app.repositories.users import user_repository_base, user_repository
 from app.repositories.vehicles import vehicle_repository_base, vehicle_repository
 from app.repositories.stores import store_repository_base, store_repository
-
-
-
-setup_logging()
-logger = logging.getLogger(__name__)
 
 
 class UnitOfWorkBase(ABC):

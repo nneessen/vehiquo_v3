@@ -59,13 +59,10 @@ def get_users(
 
 #✅
 def get_user_by_id(db: Session, user_id: int) -> Optional[models.User]:
-    try:
-        with UnitOfWork(db) as uow:
-            user = uow.users.get_user(user_id)
-            return user.as_dict()
-    except Exception as e:
-        return {"Status": "Failed", "Detail": f"Error getting user with id {user_id}"}
-
+    with UnitOfWork(db) as uow:
+        user = uow.users.get_user(user_id)
+        return user.serialize()
+   
 
 def get_user_by_email(db: Session, email: str) -> Optional[models.User]:
     return db.query(models.User).filter(models.User.email == email).first()

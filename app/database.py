@@ -10,7 +10,10 @@ from sqlalchemy.orm import sessionmaker
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db" #! FOR TESTING ONLY
 
 engine = create_engine(
-    os.getenv("DB_URL", SQLALCHEMY_DATABASE_URL)
+    os.getenv("DB_URL", SQLALCHEMY_DATABASE_URL), 
+    echo=True,
+    connect_args={"check_same_thread": False},
+    pool_pre_ping=True
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
