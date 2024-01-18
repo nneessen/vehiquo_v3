@@ -48,13 +48,10 @@ def get_units(db: Session,
               model_to_join: Optional[Any] = None,
               joined_model_filters: Optional[dict] = None
     ) -> List[unit_model.Unit]:
-    try:
-        with UnitOfWork(db) as uow:
-            db_units = uow.units.get_all_units(
-                skip, limit, filter, to_join, model_to_join, joined_model_filters)
-            return [unit.as_dict() for unit in db_units]
-    except Exception as e:
-        return {"Status": "Error", "Message": "Error getting units"}
+    with UnitOfWork(db) as uow:
+        db_units = uow.units.get_all_units(
+            skip, limit, filter, to_join, model_to_join, joined_model_filters)
+        return [db_unit.serialize() for db_unit in db_units]
 
 
 def get_store_units(db: Session, store_id: int, skip: int = 0, limit: int = 100) -> List[unit_model.Unit]:

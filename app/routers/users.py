@@ -1,4 +1,4 @@
-from typing import Any, Annotated, List, Optional
+from typing import Any, Annotated, List, Optional, Literal
 
 from datetime import timedelta
 
@@ -25,7 +25,7 @@ from app.utils.decorators import timeit
 from app.utils.mapper import map_string_to_model
 
 
-
+UserResponseModel = Annotated[schemas.UserOutput, Literal["UserResponseModel"]]
 
 router = APIRouter(tags=["Users"])
 
@@ -82,7 +82,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)) -> schemas.UserOutput:
     return user
 
 
-@router.get("/users/", status_code=status.HTTP_200_OK, response_model=List[schemas.UserOutput])
+@router.get("/users/", status_code=status.HTTP_200_OK, response_model=List[UserResponseModel])
 def get_users(db: Session = Depends(get_db), 
     skip: int = 0, 
     limit: int = 100,
@@ -92,7 +92,7 @@ def get_users(db: Session = Depends(get_db),
     model_to_join: Optional[str] = None,
     joined_model_filter_key: Optional[str] = None,
     joined_model_filter_value: Optional[str] = None
-    ) -> schemas.UserOutput:
+    ) -> List[UserResponseModel]:
     
     filter = {filter_key: filter_value} if filter_key and filter_value else None
     joined_model_filters = {joined_model_filter_key: joined_model_filter_value} if joined_model_filter_key and joined_model_filter_value else None

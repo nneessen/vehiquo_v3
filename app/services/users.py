@@ -52,12 +52,10 @@ def get_users(
     model_to_join: Optional[str] = None,
     joined_model_filters: Optional[dict] = None
     ) -> List[Optional[models.User]]:
-    try:
-        with UnitOfWork(db) as uow:
-            users = uow.users.get_users(skip, limit, filter, to_join, model_to_join, joined_model_filters)
-            return [user.as_dict() for user in users]
-    except Exception as e:
-        return {"Status": "Failed", "Detail": "Error getting users"}
+    
+    with UnitOfWork(db) as uow:
+        users = uow.users.get_users(skip, limit, filter, to_join, model_to_join, joined_model_filters)
+        return [user.serialize() for user in users]
 
 #✅
 def get_user_by_id(db: Session, user_id: int) -> Optional[models.User]:

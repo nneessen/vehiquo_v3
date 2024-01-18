@@ -52,5 +52,4 @@ class Unit(SerializerMixin, Base):
     purchased_by = Column(Integer, ForeignKey("users.id"))
     added_by = Column(Integer, ForeignKey("users.id"))
 
-    def as_dict(self):
-        return self.serialize(include_relationships=True, exclude=["vehicle_id", "store_id", "purchased_by", "added_by"])
+    
