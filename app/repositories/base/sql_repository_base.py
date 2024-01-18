@@ -24,7 +24,7 @@ class SqlRepositoryBase(Generic[T], ABC):
         limit: int, 
         filter: Optional[dict] = None, 
         to_join: bool = False, 
-        model_to_join: Optional[T] = None,
+        model_to_join: Optional[str] = None,
         joined_model_filters: Optional[dict] = None
         ) -> List[T]:
         """

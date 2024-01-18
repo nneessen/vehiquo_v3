@@ -16,7 +16,8 @@ from app.exceptions.custom_exceptions import (
     AddUnitException,
     UpdateUnitException
 )
-    
+
+
 class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
     def __init__(self, db: Session) -> None:
         super().__init__(db, Unit)
@@ -28,7 +29,8 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
             message = f"Error adding unit with id {unit.id}"
             error_code = "unit_add_error"
             raise AddUnitException(message, error_code)
-    
+
+
     def delete_unit(self, unit_id: int) -> Unit:
         try:
             return super()._delete(unit_id)
@@ -37,6 +39,7 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
             error_code = "unit_delete_error"
             raise DeleteUnitException(message, error_code)
 
+
     def get_unit(self, unit_id: int) -> Optional[Unit]:
         try:
             return super()._get(unit_id)
@@ -44,7 +47,8 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
             message = f"Error getting unit with id {unit_id}"
             error_code = "unit_get_error"
             raise DeleteUnitException(message, error_code)
-        
+
+
     def get_all_units(self, 
                       skip: int, 
                       limit: int, 
@@ -60,6 +64,7 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
             message = f"Error getting all units"
             error_code = "unit_get_all_error"
             raise DeleteUnitException(message, error_code)
+
 
     def update_unit(self, unit: Unit, unit_id: int) -> Unit:
         try:

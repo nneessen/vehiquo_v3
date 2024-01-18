@@ -58,7 +58,7 @@ def get_store(store_id: int, db: Session = Depends(get_db)) -> stores_schema.Sto
     return store
 
 
-@router.get("/", status_code=status.HTTP_200_OK, response_model=List[StoreResponseModel])
+@router.get("/", status_code=status.HTTP_200_OK)
 def get_stores(db: Session = Depends(get_db),
                skip: int = 0, 
                limit: int = 100,
@@ -68,7 +68,7 @@ def get_stores(db: Session = Depends(get_db),
                model_to_join: Optional[str] = None,
                joined_model_filter_key: Optional[str] = None,
                joined_model_filter_value: Optional[str] = None
-    ) -> StoreResponseModel:
+    ):
     
     filter = {filter_key: filter_value} if filter_key and filter_value else None
     joined_model_filters = {joined_model_filter_key: joined_model_filter_value} if joined_model_filter_key and joined_model_filter_value else None
@@ -91,6 +91,7 @@ def get_stores(db: Session = Depends(get_db),
             status_code=404, 
             detail=f"Stores not found"
             )
+    
     return stores
 
 

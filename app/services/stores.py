@@ -54,9 +54,9 @@ def get_stores(db: Session,
     ) -> List[store_model.Store]:
     
     with UnitOfWork(db) as uow:
-        stores = uow.stores.get_all_stores(
+        db_stores = uow.stores.get_all_stores(
             skip, limit, filter, to_join, model_to_join, joined_model_filters)
-        return [store.serialize() for store in stores]
+        return [db_store.serialize() for db_store in db_stores]
    
 def update_store(db: Session, store_id: int, store: store_schema.StoreUpdate) -> store_model.Store:
     try:

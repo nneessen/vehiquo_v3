@@ -23,7 +23,7 @@ def create_unit(db: Session, unit: unit_schema.UnitAdd, vehicle: vehicle_schema.
             db_unit.vehicle_id = db_vehicle.id
             uow.commit()
             uow.refresh(db_unit)
-            return db_unit.as_dict() if db_unit else None
+            return db_unit.serialize() if db_unit else None
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
