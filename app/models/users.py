@@ -3,8 +3,9 @@ from sqlalchemy.orm import relationship
 
 from app.database import Base
 
+from app.models.mixins.core import SerializerMixin
 
-class User(Base):
+class User(SerializerMixin, Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -26,8 +27,5 @@ class User(Base):
     store_id = Column(Integer, ForeignKey("stores.id"))
     
     def as_dict(self):
-        user_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return self.serialize(include=["store_id"])
         
-        user_dict["store"] = self.store.as_dict() if self.store is not None else None
-
-        return user_dict

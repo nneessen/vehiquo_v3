@@ -27,7 +27,7 @@ class UnitRepositoryBase(SqlRepository[Unit], ABC):
         limit: int, 
         filter: Optional[dict] = None, 
         to_join: bool = False, 
-        model_to_join: Optional[Any] = None,
+        model_to_join: Optional[str] = None,
         joined_model_filters: Optional[dict] = None
         ) -> List[Unit]:
         raise NotImplementedError()

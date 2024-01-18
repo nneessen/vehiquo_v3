@@ -41,19 +41,20 @@ def get_unit_by_id(db: Session, unit_id: int) -> Optional[unit_model.Unit]:
 
 #✅
 def get_units(db: Session, 
-    skip: int = 0, 
-    limit: int = 100, 
-    filter: Optional[dict] = None,
-    to_join: bool = False,
-    model_to_join: Optional[Any] = None,
-    joined_model_filters: Optional[dict] = None
+              skip: int = 0, 
+              limit: int = 100, 
+              filter: Optional[dict] = None,
+              to_join: bool = False,
+              model_to_join: Optional[Any] = None,
+              joined_model_filters: Optional[dict] = None
     ) -> List[unit_model.Unit]:
     try:
         with UnitOfWork(db) as uow:
-            db_units = uow.units.get_all_units(skip, limit, filter, to_join, model_to_join, joined_model_filters)
+            db_units = uow.units.get_all_units(
+                skip, limit, filter, to_join, model_to_join, joined_model_filters)
             return [unit.as_dict() for unit in db_units]
     except Exception as e:
-        return {"Status": "Failed", "Detail": "Error getting units"}
+        return {"Status": "Error", "Message": "Error getting units"}
 
 
 def get_store_units(db: Session, store_id: int, skip: int = 0, limit: int = 100) -> List[unit_model.Unit]:
@@ -147,12 +148,3 @@ def add_vehicle_to_unit(db: Session, vehicle_id: int, unit_id: int) -> unit_mode
     db.commit()
     db.refresh(db_unit)
     return db_unit
-
-def map_string_to_model(model_name: str) -> Any:
-    if model_name.lower() == "vehicle":
-        return vehicle_model.Vehicle
-    else:
-        raise HTTPException(
-            status_code=404, 
-            detail=f"Model {model_name} not found"
-            )

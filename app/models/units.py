@@ -10,10 +10,12 @@ from sqlalchemy import (
     Boolean,
 )
 from sqlalchemy.orm import relationship
+
 from app.database import Base
 
+from app.models.mixins.core import SerializerMixin
 
-class Unit(Base):
+class Unit(SerializerMixin, Base):
     __tablename__ = "units"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -51,9 +53,4 @@ class Unit(Base):
     added_by = Column(Integer, ForeignKey("users.id"))
 
     def as_dict(self):
-        unit_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-        unit_dict["vehicle"] = self.vehicle.as_dict() if self.vehicle is not None else None
-        unit_dict["store"] = self.store.as_dict() if self.store is not None else None
-        return unit_dict
-
+        return self.serialize(include_relationships=True, exclude=["vehicle_id", "store_id", "purchased_by", "added_by"])

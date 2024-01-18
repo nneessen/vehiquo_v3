@@ -15,6 +15,7 @@ from app.services import units as unit_service
 
 from app.routers.security.dependencies import oauth2_scheme
 
+from app.utils.mapper import map_string_to_model
 
 
 router = APIRouter(prefix="/units", tags=["Units"])
@@ -46,14 +47,23 @@ def get_units(db: Session = Depends(get_db),
               model_to_join: Optional[str] = None,
               joined_model_filter_key: Optional[str] = None,
               joined_model_filter_value: Optional[str] = None
-              ) -> units_schema.UnitOutput:
+    ) -> units_schema.UnitOutput:
+
     filter = {filter_key: filter_value} if filter_key and filter_value else None
     joined_model_filters = {joined_model_filter_key: joined_model_filter_value} if joined_model_filter_key and joined_model_filter_value else None
 
     if model_to_join:
-        model_to_join = unit_service.map_string_to_model(model_to_join)
+        model_to_join = map_string_to_model(model_to_join)
     
-    units = unit_service.get_units(db, skip=skip, limit=limit, filter=filter, to_join=to_join, model_to_join=model_to_join, joined_model_filters=joined_model_filters)
+    units = unit_service.get_units(
+        db, 
+        skip=skip, 
+        limit=limit, 
+        filter=filter, 
+        to_join=to_join, 
+        model_to_join=model_to_join, 
+        joined_model_filters=joined_model_filters
+    )
     
     if not units:
         raise HTTPException(

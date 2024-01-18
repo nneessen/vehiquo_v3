@@ -20,3 +20,14 @@ class StoreRepositoryBase(SqlRepository[Store], ABC):
     @abstractmethod
     def get_store(self, entity_id: int) -> Optional[Store]:
         raise NotImplementedError()
+    
+    @abstractmethod
+    def get_all_stores(self,
+        skip: int, 
+        limit: int, 
+        filter: Optional[dict] = None, 
+        to_join: bool = False, 
+        model_to_join: Optional[str] = None,
+        joined_model_filters: Optional[dict] = None
+        ) -> List[Store]:
+        raise NotImplementedError()

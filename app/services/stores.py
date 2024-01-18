@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import HTTPException
 
@@ -44,11 +44,22 @@ def get_store_by_id(db: Session, store_id: int) -> Optional[store_model.Store]:
     except Exception as e:
         return {"Status": "Error", "Message": f"Error finding store with id of {store_id}"}
         
-
-
-def get_stores(db: Session, skip: int = 0, limit: int = 100) -> list[store_model.Store]:
-    return db.query(store_model.Store).offset(skip).limit(limit).all()
-
+def get_stores(db: Session, 
+               skip: int = 0, 
+               limit: int = 100,
+               filter: Optional[dict] = None,
+               to_join: bool = False,
+               model_to_join: Optional[str] = None,
+               joined_model_filters: Optional[dict] = None
+    ) -> List[store_model.Store]:
+    
+    try:
+        with UnitOfWork(db) as uow:
+            stores = uow.stores.get_all_stores(
+                skip, limit, filter, to_join, model_to_join, joined_model_filters)
+            return [store.as_dict() for store in stores]
+    except Exception as e:
+        return {"Status": "Error", "Message": f"Error finding stores: {e}"}    
 
 def update_store(db: Session, store_id: int, store: store_schema.StoreUpdate) -> store_model.Store:
     try:

@@ -14,9 +14,12 @@ from app.schemas import units as units_schema
 from app.services import stores as store_service
 from app.services import units as unit_service
 
+from app.utils.mapper import map_string_to_model
 
 
 router = APIRouter(prefix="/stores", tags=["Stores"])
+
+StoreOutput = Annotated[Optional[stores_schema.StoreOutput], Literal["Success", "Failure"]]
 
 
 @router.post(
@@ -44,21 +47,52 @@ def delete_store(store_id: int, db: Session = Depends(get_db)) -> Optional[store
     return {"Status": "Success", "Message": f"Store with {store_id} has bee successfully deleted!"}
     
 
-@router.get("/{store_id}", status_code=status.HTTP_200_OK, response_model=stores_schema.StoreOutput)
-def get_store(store_id: int, db: Session = Depends(get_db)) -> stores_schema.StoreOutput:
+@router.get("/{store_id}", status_code=status.HTTP_200_OK, response_model=StoreOutput)
+def get_store(store_id: int, db: Session = Depends(get_db)) -> StoreOutput:
     store = store_service.get_store_by_id(db, store_id=store_id)
     if not store:
         raise HTTPException(
-            status_code=404, 
+            status_code=status.HTTP_404_NOT_FOUND, 
             detail=f"Store with id {store_id} not found"
             )
     return store
 
 
-@router.get("/", status_code=status.HTTP_200_OK, response_model=list[stores_schema.StoreOutput])
-def get_stores(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> list[stores_schema.StoreOutput]:
-    stores = store_service.get_stores(db, skip=skip, limit=limit)
-    return {"Status": "Success", "Stores": stores}
+@router.get("/", status_code=status.HTTP_200_OK, response_model=StoreOutput)
+def get_stores(db: Session = Depends(get_db),
+               skip: int = 0, 
+               limit: int = 100,
+               filter_key: Optional[str] = None,
+               filter_value: Optional[str] = None,
+               to_join: bool = False,
+               model_to_join: Optional[str] = None,
+               joined_model_filter_key: Optional[str] = None,
+               joined_model_filter_value: Optional[str] = None
+    ) -> StoreOutput:
+    
+    filter = {filter_key: filter_value} if filter_key and filter_value else None
+    joined_model_filters = {joined_model_filter_key: joined_model_filter_value} if joined_model_filter_key and joined_model_filter_value else None
+
+    if model_to_join:
+        model_to_join = map_string_to_model(model_to_join)
+        
+    stores = store_service.get_stores(
+        db, 
+        skip=skip, 
+        limit=limit, 
+        filter=filter, 
+        to_join=to_join, 
+        model_to_join=model_to_join, 
+        joined_model_filters=joined_model_filters
+    )
+    
+    if not stores:
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Stores not found"
+            )
+    return stores
+
 
 
 

@@ -22,7 +22,7 @@ from app.routers.security.dependencies import get_current_active_user, create_ac
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
 from app.utils.decorators import timeit
-
+from app.utils.mapper import map_string_to_model
 
 
 
@@ -98,7 +98,7 @@ def get_users(db: Session = Depends(get_db),
     joined_model_filters = {joined_model_filter_key: joined_model_filter_value} if joined_model_filter_key and joined_model_filter_value else None
 
     if model_to_join:
-        model_to_join = user_service.map_string_to_model(model_to_join)
+        model_to_join = map_string_to_model(model_to_join)
     
     users = user_service.get_users(
         db, 

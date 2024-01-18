@@ -10,10 +10,10 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from app.database import Base
+from app.models.mixins.core import SerializerMixin
 
 
-
-class Vehicle(Base):
+class Vehicle(SerializerMixin, Base):
     __tablename__ = "vehicles"
     
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -39,4 +39,4 @@ class Vehicle(Base):
     
     
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return self.serialize(exclude=["units"])

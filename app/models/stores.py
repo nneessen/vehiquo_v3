@@ -13,8 +13,10 @@ from sqlalchemy.orm import relationship
 
 from app.database import Base
 
+from app.models.mixins.core import SerializerMixin
 
-class Store(Base):
+
+class Store(SerializerMixin, Base):
     __tablename__ = "stores"
     
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -35,5 +37,4 @@ class Store(Base):
     units = relationship("Unit", backref="store", cascade='all, delete-orphan',lazy="joined")
     
     def as_dict(self):
-        store_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        return store_dict
+        return self.serialize(exclude=["users", "units"])

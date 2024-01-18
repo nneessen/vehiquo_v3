@@ -62,6 +62,7 @@ class UnitOutput(UnitBase):
     added_by: int | None = None
 
     vehicle: vehicles_schema.VehicleOutput | None = None
+    
 
 
 class UnitCreateOutput(BaseModel):

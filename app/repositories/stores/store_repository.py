@@ -46,3 +46,19 @@ class StoreRepository(StoreRepositoryBase, SqlRepository[Store]):
             message = f"Error getting store with id {store_id}"
             error_code = "store_get_error"
             raise GetStoreException(message, error_code)
+    
+    def get_all_stores(self, 
+                      skip: int, 
+                      limit: int, 
+                      filter: Optional[dict] = None, 
+                      to_join: bool = False, 
+                      model_to_join: Optional[Any] = None,
+                      joined_model_filters: Optional[dict] = None
+        ) -> List[Store]:
+        try:
+            return super()._get_all(
+                skip, limit, filter, to_join, model_to_join, joined_model_filters)
+        except Exception as e:
+            message = f"Error getting all stores"
+            error_code = "stores_get_all_error"
+            raise GetStoreException(message, error_code)
