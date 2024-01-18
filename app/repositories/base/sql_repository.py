@@ -47,23 +47,25 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
         limit: int, 
         filter: Optional[dict] = None,
         to_join: bool = False,
-        model_to_join: Optional[T] = None,
+        models_to_join: Optional[List[T]] = None,  # List of model classes
         joined_model_filters: Optional[dict] = None
         ) -> List[T]:
         try:
             stmt = select(self.model).offset(skip).limit(limit)
             if filter:
                 stmt = stmt.filter_by(**filter)
-            if to_join:
-                stmt = stmt.join(model_to_join)
-                if joined_model_filters:
-                    stmt = stmt.filter_by(**joined_model_filters)
+            if to_join and models_to_join:
+                for model in models_to_join:
+                    stmt = stmt.join(model)  # Join each model in the list
+                    if joined_model_filters:
+                        stmt = stmt.filter_by(**joined_model_filters)
 
             entities = self.db.execute(stmt).scalars().all()
             return entities
         except Exception as e:
             self.db.rollback()
             raise e
+
 
 
 

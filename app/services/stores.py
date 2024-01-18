@@ -21,7 +21,7 @@ def create_store(db: Session, store: store_schema.StoreCreate) -> store_model.St
             store = uow.stores.add_store(store)
             uow.commit()
             uow.refresh(store)
-            return store.as_dict() if store else None
+            return store.serialize() if store else None
     except Exception as e:
         return {"Status": "Error", "Message": f"Error creating store: {e}"}
 

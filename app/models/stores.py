@@ -33,6 +33,6 @@ class Store(SerializerMixin, Base):
     # autogroup_id = Column(Integer, ForeignKey("autogroups.id"))
     # cluster_id = Column(Integer, ForeignKey("clusters.id"))
     
-    users = relationship("User", backref="store", lazy="select")
-    units = relationship("Unit", backref="store", lazy="select")
+    users = relationship("User", back_populates="store", lazy="select")
+    units = relationship("Unit", back_populates="store", lazy="select")
     

@@ -9,16 +9,18 @@ from app.models.stores import Store
 
 
 def map_string_to_model(model_name: str) -> Any:
-    if model_name.lower() == "vehicle":
-        return Vehicle
-    elif model_name.lower() == "unit":
-        return Unit
-    elif model_name.lower() == "user":
-        return User
-    elif model_name.lower() == "store":
-        return Store
-    else:
+    model_mapping = {
+        "vehicle": Vehicle,
+        "unit": Unit,
+        "user": User,
+        "store": Store
+    }
+
+    model_class = model_mapping.get(model_name.lower())
+    if not model_class:
         raise HTTPException(
             status_code=404, 
             detail=f"Model {model_name} not found"
-            )
+        )
+
+    return model_class

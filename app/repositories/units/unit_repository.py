@@ -54,16 +54,12 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
                       limit: int, 
                       filter: Optional[dict] = None, 
                       to_join: bool = False, 
-                      model_to_join: Optional[Any] = None,
+                      models_to_join: Optional[List[str]] = None,
                       joined_model_filters: Optional[dict] = None
         ) -> List[Unit]:
-        try:
-            return super()._get_all(
-                skip, limit, filter, to_join, model_to_join, joined_model_filters)
-        except Exception as e:
-            message = f"Error getting all units"
-            error_code = "unit_get_all_error"
-            raise DeleteUnitException(message, error_code)
+        return super()._get_all(
+            skip, limit, filter, to_join, models_to_join, joined_model_filters)
+
 
 
     def update_unit(self, unit: Unit, unit_id: int) -> Unit:

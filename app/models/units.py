@@ -45,7 +45,7 @@ class Unit(SerializerMixin, Base):
     zip_code_loc = Column(Integer, nullable=True, default=60610)
     delivery_status = Column(String, nullable=True, default="N/A")
     buy_fee = Column(Integer, nullable=True, default=250)
-    vehicle = relationship("Vehicle", back_populates="units", lazy="selectin")
+    vehicle = relationship("Vehicle", back_populates="units", lazy="select")
     
     store_id = Column(Integer, ForeignKey("stores.id"))
     vehicle_id = Column(Integer, ForeignKey("vehicles.id"))

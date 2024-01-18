@@ -24,7 +24,7 @@ class SqlRepositoryBase(Generic[T], ABC):
         limit: int, 
         filter: Optional[dict] = None, 
         to_join: bool = False, 
-        model_to_join: Optional[str] = None,
+        models_to_join: Optional[List[T]] = None,
         joined_model_filters: Optional[dict] = None
         ) -> List[T]:
         """
@@ -35,7 +35,7 @@ class SqlRepositoryBase(Generic[T], ABC):
             limit (int): Maximum number of rows to return
             filter (Optional[dict], optional): Dictionary of filters to apply. Defaults to None.
             to_join (bool, optional): Whether to join another table. Defaults to False.
-            model_to_join (Optional[T], optional): The model to join. Defaults to None.
+            models_to_join (Optional[List[T]], optional): The model to join. Defaults to None.
             joined_model_filters (Optional[dict], optional): Filters to apply to the joined table. Defaults to None.
         Returns:
             List[T]: A list of rows from the database

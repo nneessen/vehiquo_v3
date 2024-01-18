@@ -1,8 +1,7 @@
 import time
 
-from typing import Optional, List, Any
+from typing import Optional, List
 from sqlalchemy.orm import Session
-from sqlalchemy.orm import joinedload
 from fastapi import HTTPException
 from datetime import datetime
 
@@ -16,16 +15,14 @@ from app.unit_of_work.unit_of_work import UnitOfWork
 
 
 def create_unit(db: Session, unit: unit_schema.UnitAdd, vehicle: vehicle_schema.VehicleAdd) -> unit_model.Unit:
-    try:
-        with UnitOfWork(db) as uow:
-            db_unit = uow.units.add_unit(unit)
-            db_vehicle = uow.vehicles.add_vehicle(vehicle)
-            db_unit.vehicle_id = db_vehicle.id
-            uow.commit()
-            uow.refresh(db_unit)
-            return db_unit.serialize() if db_unit else None
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    with UnitOfWork(db) as uow:
+        db_unit = uow.units.add_unit(unit)
+        db_vehicle = uow.vehicles.add_vehicle(vehicle)
+        db_unit.vehicle_id = db_vehicle.id
+        uow.commit()
+        uow.refresh(db_unit)
+        return db_unit.serialize() if db_unit else None
+
 
 
 #✅
@@ -35,7 +32,7 @@ def get_unit_by_id(db: Session, unit_id: int) -> Optional[unit_model.Unit]:
             db_unit = uow.units.get_unit(unit_id)
             db_vehicle = uow.vehicles.get_vehicle(db_unit.vehicle_id) if db_unit.vehicle_id else None
             db_unit.vehicle = db_vehicle
-            return db_unit.as_dict() if db_unit else None
+            return db_unit.serialize() if db_unit else None
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -45,12 +42,12 @@ def get_units(db: Session,
               limit: int = 100, 
               filter: Optional[dict] = None,
               to_join: bool = False,
-              model_to_join: Optional[Any] = None,
+              models_to_join: Optional[List[str]] = None,
               joined_model_filters: Optional[dict] = None
     ) -> List[unit_model.Unit]:
     with UnitOfWork(db) as uow:
         db_units = uow.units.get_all_units(
-            skip, limit, filter, to_join, model_to_join, joined_model_filters)
+            skip, limit, filter, to_join, models_to_join, joined_model_filters)
         return [db_unit.serialize() for db_unit in db_units]
 
 
