@@ -30,9 +30,6 @@ class Store(SerializerMixin, Base):
     is_primary_hub = Column(Boolean, nullable=True, default=False)
     qb_customer_id = Column(Integer, nullable=True)
     
-    # autogroup_id = Column(Integer, ForeignKey("autogroups.id"))
-    # cluster_id = Column(Integer, ForeignKey("clusters.id"))
-    
-    users = relationship("User", back_populates="store", lazy="select")
-    units = relationship("Unit", back_populates="store", lazy="select")
+    users = relationship("User", back_populates="store")
+    units = relationship("Unit", back_populates="stores")
     

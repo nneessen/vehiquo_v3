@@ -25,4 +25,5 @@ class User(SerializerMixin, Base):
     is_superuser = Column(Boolean, default=False)
     
     store_id = Column(Integer, ForeignKey("stores.id"))
+    store = relationship("Store", back_populates="users")
     
