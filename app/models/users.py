@@ -26,6 +26,3 @@ class User(SerializerMixin, Base):
     
     store_id = Column(Integer, ForeignKey("stores.id"))
     
-    def as_dict(self):
-        return self.serialize(include=["store_id"])
-        

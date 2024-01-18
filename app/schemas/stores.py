@@ -1,6 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict
 
-
 class StoreBase(BaseModel):
     name: str | None = Field(None, max_length=50)
     street_address: str | None = Field(None, max_length=50)
@@ -30,8 +29,23 @@ class StoreDelete(StoreBase):
     pass
 
 
-class StoreOutput(StoreBase):
-    pass
+class StoreOutput(BaseModel):
+    id: int | None = None
+    name: str | None = Field(None, max_length=50)
+    street_address: str | None = Field(None, max_length=50)
+    city: str | None = Field(None, max_length=50)
+    state: str | None = Field(None, max_length=50)
+    zip_code: int | None = Field(None)
+    phone: str | None = Field(None, max_length=50)
+    admin_clerk_1: str | None = Field(None, max_length=50, description="Admin Clerk 1")
+    is_primary_hub: bool | None = Field(None)
+    qb_customer_id: int | None = Field(None)
+    
+    # @property
+    # def user(self):
+    #     from app.schemas.users import UserOutput
+    #     return UserOutput
+
 
 class Store(StoreBase):
     unit_id: int

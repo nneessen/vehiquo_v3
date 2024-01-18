@@ -19,7 +19,7 @@ from app.utils.mapper import map_string_to_model
 
 router = APIRouter(prefix="/stores", tags=["Stores"])
 
-StoreOutput = Annotated[Optional[stores_schema.StoreOutput], Literal["Success", "Failure"]]
+StoreResponseModel = Annotated[stores_schema.StoreOutput, Literal["StoreResponseModel"]]
 
 
 @router.post(
@@ -47,8 +47,8 @@ def delete_store(store_id: int, db: Session = Depends(get_db)) -> Optional[store
     return {"Status": "Success", "Message": f"Store with {store_id} has bee successfully deleted!"}
     
 
-@router.get("/{store_id}", status_code=status.HTTP_200_OK, response_model=StoreOutput)
-def get_store(store_id: int, db: Session = Depends(get_db)) -> StoreOutput:
+@router.get("/{store_id}", status_code=status.HTTP_200_OK, response_model=stores_schema.StoreOutput)
+def get_store(store_id: int, db: Session = Depends(get_db)) -> stores_schema.StoreOutput:
     store = store_service.get_store_by_id(db, store_id=store_id)
     if not store:
         raise HTTPException(
@@ -58,7 +58,7 @@ def get_store(store_id: int, db: Session = Depends(get_db)) -> StoreOutput:
     return store
 
 
-@router.get("/", status_code=status.HTTP_200_OK, response_model=StoreOutput)
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[StoreResponseModel])
 def get_stores(db: Session = Depends(get_db),
                skip: int = 0, 
                limit: int = 100,
@@ -68,7 +68,7 @@ def get_stores(db: Session = Depends(get_db),
                model_to_join: Optional[str] = None,
                joined_model_filter_key: Optional[str] = None,
                joined_model_filter_value: Optional[str] = None
-    ) -> StoreOutput:
+    ) -> StoreResponseModel:
     
     filter = {filter_key: filter_value} if filter_key and filter_value else None
     joined_model_filters = {joined_model_filter_key: joined_model_filter_value} if joined_model_filter_key and joined_model_filter_value else None

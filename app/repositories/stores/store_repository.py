@@ -59,6 +59,6 @@ class StoreRepository(StoreRepositoryBase, SqlRepository[Store]):
             return super()._get_all(
                 skip, limit, filter, to_join, model_to_join, joined_model_filters)
         except Exception as e:
-            message = f"Error getting all stores"
-            error_code = "stores_get_all_error"
-            raise GetStoreException(message, error_code)
+            message = f"Error getting all units"
+            error_code = "unit_get_all_error"
+            raise DeleteStoreException(message, error_code)

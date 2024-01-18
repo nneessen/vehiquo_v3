@@ -36,5 +36,3 @@ class Store(SerializerMixin, Base):
     users = relationship("User", backref="store", lazy="joined")
     units = relationship("Unit", backref="store", cascade='all, delete-orphan',lazy="joined")
     
-    def as_dict(self):
-        return self.serialize(exclude=["users", "units"])
