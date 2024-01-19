@@ -43,18 +43,17 @@ def get_user(db, username: str):
     return db.query(models.User).filter(models.User.username == username).first()
 
 #✅
-def get_users(
-    db: Session, 
+def get_users(db: Session,
     skip: int = 0, 
-    limit: int = 100,
+    limit: int = 100, 
     filter: Optional[dict] = None,
     to_join: bool = False,
-    model_to_join: Optional[str] = None,
+    models_to_join: Optional[List[str]] = None,
     joined_model_filters: Optional[dict] = None
     ) -> List[Optional[models.User]]:
     
     with UnitOfWork(db) as uow:
-        users = uow.users.get_users(skip, limit, filter, to_join, model_to_join, joined_model_filters)
+        users = uow.users.get_users(skip, limit, filter, to_join, models_to_join, joined_model_filters)
         return [user.serialize() for user in users]
 
 #✅

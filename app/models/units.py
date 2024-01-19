@@ -45,11 +45,13 @@ class Unit(SerializerMixin, Base):
     zip_code_loc = Column(Integer, nullable=True, default=60610)
     delivery_status = Column(String, nullable=True, default="N/A")
     buy_fee = Column(Integer, nullable=True, default=250)
-    vehicle = relationship("Vehicle", back_populates="units", lazy="select")
-    store = relationship("Store", back_populates="units", lazy="select")
     
+    # store = relationship("Store", back_populates="units")
     store_id = Column(Integer, ForeignKey("stores.id"))
+
+    vehicle = relationship("Vehicle", back_populates="units")
     vehicle_id = Column(Integer, ForeignKey("vehicles.id"))
+
     purchased_by = Column(Integer, ForeignKey("users.id"))
     added_by = Column(Integer, ForeignKey("users.id"))
 

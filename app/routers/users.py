@@ -84,21 +84,23 @@ def get_user(user_id: int, db: Session = Depends(get_db)) -> schemas.UserOutput:
 
 @router.get("/users/", status_code=status.HTTP_200_OK, response_model=List[UserResponseModel])
 def get_users(db: Session = Depends(get_db), 
-    skip: int = 0, 
-    limit: int = 100,
-    filter_key: Optional[str] = None,
-    filter_value: Optional[str] = None,
-    to_join: bool = False,
-    model_to_join: Optional[str] = None,
-    joined_model_filter_key: Optional[str] = None,
-    joined_model_filter_value: Optional[str] = None
+              skip: int = 0,
+              limit: int = 100,
+              filter_key: Optional[str] = None,
+              filter_value: Optional[str] = None,
+              to_join: bool = False,
+              models_to_join: Optional[str] = None, # comma separated string of models to join
+              joined_model_filter_key: Optional[str] = None,
+              joined_model_filter_value: Optional[str] = None
     ) -> List[UserResponseModel]:
     
     filter = {filter_key: filter_value} if filter_key and filter_value else None
     joined_model_filters = {joined_model_filter_key: joined_model_filter_value} if joined_model_filter_key and joined_model_filter_value else None
 
-    if model_to_join:
-        model_to_join = map_string_to_model(model_to_join)
+
+    models_to_join_classes = []
+    if models_to_join:
+        models_to_join_classes = [map_string_to_model(model) for model in models_to_join.split(",")]
     
     users = user_service.get_users(
         db, 
@@ -106,7 +108,7 @@ def get_users(db: Session = Depends(get_db),
         limit=limit,
         filter=filter,
         to_join=to_join, 
-        model_to_join=model_to_join,
+        models_to_join=models_to_join_classes,
         joined_model_filters=joined_model_filters
     )
 

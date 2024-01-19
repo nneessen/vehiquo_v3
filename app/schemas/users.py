@@ -52,6 +52,7 @@ class UserOutput(BaseModel):
     )
     phone_number : str | None = None
     
+    store_id: int | None = None
     store: store_schema.StoreOutput | None = None
 
 

@@ -4,7 +4,7 @@ from app.config import ROUTE_PREFIX_V1
 
 from . import home
 
-router = APIRouter()
+router = APIRouter(tags=["Home"])
 
 
 @router.get("/home/")

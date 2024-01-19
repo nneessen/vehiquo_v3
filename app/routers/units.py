@@ -20,7 +20,7 @@ from app.utils.mapper import map_string_to_model
 
 router = APIRouter(prefix="/units", tags=["Units"])
 
-UnitResponse = Annotated[units_schema.UnitOutput, Literal["UnitResponse"]]
+UnitResponseModel = Annotated[units_schema.UnitOutput, Literal["UnitResponse"]]
 #✅
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=units_schema.UnitCreateOutput)
 def create_unit(
@@ -37,8 +37,7 @@ def create_unit(
 
 
 #✅
-@router.get("/", status_code=status.HTTP_200_OK, response_model=List[UnitResponse])
-@cache(expire=60)
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[UnitResponseModel])
 def get_units(db: Session = Depends(get_db), 
               skip: int = 0,
               limit: int = 100,
@@ -48,7 +47,7 @@ def get_units(db: Session = Depends(get_db),
               models_to_join: Optional[str] = None, # comma separated string of models to join
               joined_model_filter_key: Optional[str] = None,
               joined_model_filter_value: Optional[str] = None
-    ) -> UnitResponse:
+    ) -> UnitResponseModel:
 
     filter = {filter_key: filter_value} if filter_key and filter_value else None
     joined_model_filters = {joined_model_filter_key: joined_model_filter_value} if joined_model_filter_key and joined_model_filter_value else None

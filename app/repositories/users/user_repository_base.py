@@ -25,10 +25,10 @@ class UserRepositoryBase(SqlRepository[User], ABC):
     @abstractmethod
     def get_users(self, 
         skip: int, 
-        limit: int,
-        filter: Optional[dict] = None,
-        to_join: bool = False,
-        model_to_join: Optional[str] = None,
+        limit: int, 
+        filter: Optional[dict] = None, 
+        to_join: bool = False, 
+        models_to_join: Optional[List[str]] = None,
         joined_model_filters: Optional[dict] = None
         ) -> List[User]:
         raise NotImplementedError()

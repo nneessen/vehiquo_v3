@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict
+from typing import Optional, List
 
 
 class StoreBase(BaseModel):
@@ -42,11 +43,4 @@ class StoreOutput(BaseModel):
     is_primary_hub: bool | None = Field(None)
     qb_customer_id: int | None = Field(None)
     
-
-
-
-class Store(StoreBase):
-    unit_id: int
-    user_id: int
-    # autogroup_id: int
-    # cluster_id: int
+    

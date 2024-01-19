@@ -45,17 +45,17 @@ def get_store_by_id(db: Session, store_id: int) -> Optional[store_model.Store]:
         return {"Status": "Error", "Message": f"Error finding store with id of {store_id}"}
         
 def get_stores(db: Session, 
-               skip: int = 0, 
-               limit: int = 100,
-               filter: Optional[dict] = None,
-               to_join: bool = False,
-               model_to_join: Optional[str] = None,
-               joined_model_filters: Optional[dict] = None
+              skip: int = 0, 
+              limit: int = 100, 
+              filter: Optional[dict] = None,
+              to_join: bool = False,
+              models_to_join: Optional[List[str]] = None,
+              joined_model_filters: Optional[dict] = None
     ) -> List[store_model.Store]:
     
     with UnitOfWork(db) as uow:
         db_stores = uow.stores.get_all_stores(
-            skip, limit, filter, to_join, model_to_join, joined_model_filters)
+            skip, limit, filter, to_join, models_to_join, joined_model_filters)
         return [db_store.serialize() for db_store in db_stores]
    
 def update_store(db: Session, store_id: int, store: store_schema.StoreUpdate) -> store_model.Store:
