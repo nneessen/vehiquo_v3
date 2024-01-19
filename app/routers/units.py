@@ -38,6 +38,7 @@ def create_unit(
 
 #✅
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[UnitResponse])
+@cache(expire=60)
 def get_units(db: Session = Depends(get_db), 
               skip: int = 0,
               limit: int = 100,
