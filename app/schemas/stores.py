@@ -34,12 +34,13 @@ class StoreDelete(StoreBase):
     pass
 
 
+# for user in StoreOutput.users:
 class StoreUserOutput(BaseModel):
     id: int | None = Field(None)
     store_id: int | None = Field(None)
 
 
-
+# for unit in StoreOutput.units:
 class StoreUnitOutput(BaseModel):
     id: int | None = Field(None)
     vehicle_id: int | None = None

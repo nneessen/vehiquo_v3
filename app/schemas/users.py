@@ -33,6 +33,15 @@ class UserBase(BaseModel):
         arbitrary_types_allowed=True
     )
 
+class StoreOutput(BaseModel):
+    id: int | None = None
+    name: str | None = Field(..., max_length=50)
+    street_address: str | None = Field(None, max_length=50)
+    city: str | None = Field(None, max_length=50)
+    state: str | None = Field(None, max_length=50)
+    zip_code: int | None = Field(None)
+    phone: str | None = Field(None, max_length=50)
+    admin_clerk_1: str | None = Field(None, max_length=50, description="Admin Clerk 1")
 
 class UserOutput(BaseModel):
     id: int | None = None
@@ -53,8 +62,7 @@ class UserOutput(BaseModel):
     phone_number : str | None = None
     
     store_id: int | None = None
-    store: store_schema.StoreOutput | None = None
-
+    store: StoreOutput = None
 
 class UserCreate(UserBase):
     store_id: int | None = Field(None, description="The ID of the store the user belongs to.")
