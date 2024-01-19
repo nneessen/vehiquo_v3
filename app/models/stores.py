@@ -31,5 +31,5 @@ class Store(SerializerMixin, Base):
     qb_customer_id = Column(Integer, nullable=True)
     
     users = relationship("User", back_populates="store")
-    units = relationship("Unit", back_populates="stores")
+    units = relationship("Unit", back_populates="store")
     
