@@ -50,12 +50,12 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
 
 
     def get_all_units(self, 
-                      skip: int, 
-                      limit: int, 
-                      filter: Optional[dict] = None, 
-                      to_join: bool = False, 
-                      models_to_join: Optional[List[str]] = None,
-                      joined_model_filters: Optional[dict] = None
+        skip: int, 
+        limit: int, 
+        filter: Optional[dict] = None, 
+        to_join: bool = False, 
+        models_to_join: Optional[List[str]] = None,
+        joined_model_filters: Optional[dict] = None
         ) -> List[Unit]:
         return super()._get_all(
             skip, limit, filter, to_join, models_to_join, joined_model_filters)
@@ -63,9 +63,4 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
 
 
     def update_unit(self, unit: Unit, unit_id: int) -> Unit:
-        try:
-            return super()._update(unit, unit_id)
-        except Exception as e:
-            message = f"Error updating unit with id {unit.id}"
-            error_code = "unit_update_error"
-            raise DeleteUnitException(message, error_code)
+        return super()._update(unit, unit_id)

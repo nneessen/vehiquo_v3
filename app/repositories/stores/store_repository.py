@@ -22,47 +22,30 @@ from app.exceptions.custom_exceptions import (
 class StoreRepository(StoreRepositoryBase, SqlRepository[Store]):
     def __init__(self, db: Session) -> None:
         super().__init__(db, Store)
-        
-        
+
+
     def add_store(self, store: Store) -> Store:
-        try:
-            return super()._add(store)
-        except Exception as e:
-            message = f"Error adding store with id {store.id}"
-            error_code = "store_add_error"
-            raise AddStoreException(message, error_code)
-        
-        
+        return super()._add(store)
+
+
     def delete_store(self, store_id: int) -> Optional[Store]:
-        try:
             return super()._delete(store_id)
-        except Exception as e:
-            message = f"Error deleting store with id {store_id}"
-            error_code = "store_delete_error"
-            raise DeleteStoreException(message, error_code)
-    
-    
+
+
     def get_store(self, store_id: int) -> Optional[Store]:
-        try:
-            return super()._get(store_id)
-        except Exception as e:
-            message = f"Error getting store with id {store_id}"
-            error_code = "store_get_error"
-            raise GetStoreException(message, error_code)
-    
-    
+        return super()._get(store_id)
+
     def get_all_stores(self, 
-              skip: int = 0, 
-              limit: int = 100, 
-              filter: Optional[dict] = None,
-              to_join: bool = False,
-              models_to_join: Optional[List[str]] = None,
-              joined_model_filters: Optional[dict] = None
+        skip: int = 0, 
+        limit: int = 100, 
+        filter: Optional[dict] = None,
+        to_join: bool = False,
+        models_to_join: Optional[List[str]] = None,
+        joined_model_filters: Optional[dict] = None
         ) -> List[Store]:
-        try:
-            return super()._get_all(
-                skip, limit, filter, to_join, models_to_join, joined_model_filters)
-        except Exception as e:
-            message = f"Error getting all units"
-            error_code = "unit_get_all_error"
-            raise DeleteStoreException(message, error_code)
+        return super()._get_all(
+            skip, limit, filter, to_join, models_to_join, joined_model_filters)
+
+
+    def update_store(self, store: Store, store_id: int) -> Store:
+        return super()._update(store, store_id)

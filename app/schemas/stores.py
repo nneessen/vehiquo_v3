@@ -37,15 +37,26 @@ class StoreDelete(StoreBase):
 # for user in StoreOutput.users:
 class StoreUserOutput(BaseModel):
     id: int | None = Field(None)
-    store_id: int | None = Field(None)
-
+    first_name: str | None = Field(None, max_length=50)
+    last_name: str | None = Field(None, max_length=50)
 
 # for unit in StoreOutput.units:
 class StoreUnitOutput(BaseModel):
     id: int | None = Field(None)
-    vehicle_id: int | None = None
-    store_id: int | None = None
-    
+
+
+class SingleStoreOutput(BaseModel):
+    id: int | None = None
+    name: str | None = Field(..., max_length=50)
+    street_address: str | None = Field(None, max_length=50)
+    city: str | None = Field(None, max_length=50)
+    state: str | None = Field(None, max_length=50)
+    zip_code: int | None = Field(None)
+    phone: str | None = Field(None, max_length=50)
+    admin_clerk_1: str | None = Field(None, max_length=50, description="Admin Clerk 1")
+    is_primary_hub: bool | None = Field(None)
+    qb_customer_id: int | None = Field(None)
+
 
 class StoreOutput(BaseModel):
     id: int | None = None
@@ -60,6 +71,4 @@ class StoreOutput(BaseModel):
     qb_customer_id: int | None = Field(None)
     
     users: List[StoreUserOutput] | None = Field(None, description="Users associated with this store")
-    units: List[StoreUnitOutput] | None = Field(None, description="Units associated with this store")
-    
-    
+    # units: List[StoreUnitOutput] | None = Field(None, description="Units associated with this store")

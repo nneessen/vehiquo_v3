@@ -45,10 +45,10 @@ def delete_store(store_id: int, db: Session = Depends(get_db)) -> Optional[store
         return {"Status": "Failure", "Message": f"Store with {store_id} does not exist"}
     store_service.delete_store(db, store_id)
     return {"Status": "Success", "Message": f"Store with {store_id} has bee successfully deleted!"}
-    
 
-@router.get("/{store_id}", status_code=status.HTTP_200_OK, response_model=stores_schema.StoreOutput)
-def get_store(store_id: int, db: Session = Depends(get_db)) -> stores_schema.StoreOutput:
+
+@router.get("/{store_id}", status_code=status.HTTP_200_OK, response_model=stores_schema.SingleStoreOutput)
+def get_store(store_id: int, db: Session = Depends(get_db)) -> stores_schema.SingleStoreOutput:
     store = store_service.get_store_by_id(db, store_id=store_id)
     if not store:
         raise HTTPException(
@@ -58,7 +58,6 @@ def get_store(store_id: int, db: Session = Depends(get_db)) -> stores_schema.Sto
     return store
 
 
-@timeit
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[StoreResponseModel])
 def get_stores(db: Session = Depends(get_db),
               skip: int = 0,
@@ -70,15 +69,11 @@ def get_stores(db: Session = Depends(get_db),
               joined_model_filter_key: Optional[str] = None,
               joined_model_filter_value: Optional[str] = None
     ) -> List[StoreResponseModel]:
-    
     filter = {filter_key: filter_value} if filter_key and filter_value else None
     joined_model_filters = {joined_model_filter_key: joined_model_filter_value} if joined_model_filter_key and joined_model_filter_value else None
-
     models_to_join_classes = []
-    
     if models_to_join:
         models_to_join_classes = [map_string_to_model(model) for model in models_to_join.split(",")]
-        
     stores = store_service.get_stores(
         db, 
         skip=skip, 
@@ -88,20 +83,12 @@ def get_stores(db: Session = Depends(get_db),
         models_to_join=models_to_join_classes, 
         joined_model_filters=joined_model_filters
     )
-    
     if not stores:
         raise HTTPException(
             status_code=404, 
             detail=f"Stores not found"
             )
-    
     return stores
-
-
-
-
-
-
 
 
 @router.put("/{store_id}", response_model=stores_schema.StoreOutput)
@@ -115,9 +102,3 @@ def update_store(store_id: int, store: stores_schema.StoreUpdate, db: Session = 
         except Exception as e:
             uow.rollback()
             raise e
-
-
-@router.get("/{store_id}/units", status_code=status.HTTP_200_OK, response_model=list[units_schema.UnitOutput])
-def get_store_units(store_id: int, db: Session = Depends(get_db)) -> list[units_schema.UnitOutput]:
-    units = unit_service.get_store_units(db, store_id=store_id)
-    return {"Status": "Success", "Units": units}

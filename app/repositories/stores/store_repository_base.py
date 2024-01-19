@@ -31,3 +31,7 @@ class StoreRepositoryBase(SqlRepository[Store], ABC):
               joined_model_filters: Optional[dict] = None
         ) -> List[Store]:
         raise NotImplementedError()
+
+    @abstractmethod
+    def update_store(self, entity: Store, entity_id: int) -> Optional[Store]:
+        raise NotImplementedError()

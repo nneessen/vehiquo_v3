@@ -85,3 +85,8 @@ class UnitOfWork(UnitOfWorkBase):
         
     def rollback(self):
         self.db.rollback()
+
+
+def UNIT_OF_WORK(db: Session) -> UnitOfWork:
+    with UnitOfWork(db) as uow:
+        return uow
