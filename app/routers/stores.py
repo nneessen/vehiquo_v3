@@ -15,7 +15,7 @@ from app.services import stores as store_service
 from app.services import units as unit_service
 
 from app.utils.mapper import map_string_to_model
-
+from app.utils.decorators import timeit
 
 router = APIRouter(prefix="/stores", tags=["Stores"])
 
@@ -58,6 +58,7 @@ def get_store(store_id: int, db: Session = Depends(get_db)) -> stores_schema.Sto
     return store
 
 
+@timeit
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[StoreResponseModel])
 def get_stores(db: Session = Depends(get_db),
               skip: int = 0,
