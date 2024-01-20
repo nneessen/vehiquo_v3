@@ -25,6 +25,7 @@ def create_store(db: Session, store: store_schema.StoreCreate) -> store_model.St
 def delete_store(db: Session, store_id: int) -> None:
     UNIT_OF_WORK(db).stores.delete_store(store_id)
     db.commit()
+    return None
 
 
 def get_store_by_id(db: Session, store_id: int) -> Optional[store_model.Store]:
