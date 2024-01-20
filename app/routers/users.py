@@ -13,16 +13,13 @@ from app.dependencies import get_db
 from app.schemas import users as schemas
 from app.schemas import tokens as token_schema
 
-from app.unit_of_work.unit_of_work import UnitOfWork
-
 from app.services import users as user_service
 
 from app.routers.security.dependencies import get_current_active_user, create_access_token
 
-from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
-
-from app.utils.decorators import timeit
 from app.utils.mapper import map_string_to_model
+
+from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
 
 UserResponseModel = Annotated[schemas.UserOutput, Literal["UserResponseModel"]]

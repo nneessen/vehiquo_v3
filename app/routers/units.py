@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
+from app.routers.security.dependencies import get_current_active_user
 
 from app.models.units import Unit
 from app.models.vehicles import Vehicle
@@ -12,6 +13,7 @@ from app.models.stores import Store
 
 from app.schemas import units as units_schema
 from app.schemas import vehicles as vehicles_schema
+from app.schemas import users as user_schema
 
 from app.services import units as unit_service
 
@@ -40,19 +42,22 @@ def create_unit(
 
 #✅
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[UnitResponseModel])
-def get_units(db: Session = Depends(get_db), 
-    skip: int = 0,
-    limit: int = 100,
-    filter_key: Optional[str] = None,
-    filter_value: Optional[str] = None,
-    to_join: bool = False,
-    models_to_join: Optional[Any] = None, # comma separated string of models to join
-    joined_model_filter_key: Optional[str] = None,
-    joined_model_filter_value: Optional[str] = None,
-    include_vehicle: bool = False,
-    include_store: bool = False
-    ) -> UnitResponseModel:
-
+def get_units(
+              current_user: user_schema.UserInDB = Depends(get_current_active_user),  
+              db: Session = Depends(get_db),
+              skip: int = 0,
+              limit: int = 100,
+              filter_key: Optional[str] = None,
+              filter_value: Optional[str] = None,
+              to_join: bool = False,
+              models_to_join: Optional[Any] = None, # comma separated string of models to join
+              joined_model_filter_key: Optional[str] = None,
+              joined_model_filter_value: Optional[str] = None,
+              include_vehicle: bool = False,
+              include_store: bool = False,
+        ) -> UnitResponseModel:
+    if not current_user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
     filter = {filter_key: filter_value} if filter_key and filter_value else None
     joined_model_filters = {joined_model_filter_key: joined_model_filter_value} if joined_model_filter_key and joined_model_filter_value else None
 
@@ -79,6 +84,7 @@ def get_units(db: Session = Depends(get_db),
             detail=f"Units not found"
             )
     return units
+
 
 
 

@@ -1,8 +1,6 @@
-from pydantic import BaseModel, Field, ConfigDict, field_serializer, model_serializer
-from typing import Any, Dict
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime, timedelta
 
-from app.models.vehicles import Vehicle
 
 from app.schemas import vehicles as vehicles_schema
 from app.schemas import stores as stores_schema
@@ -36,19 +34,16 @@ class UnitDelete(UnitBase):
 class UnitExpire(UnitBase):
     pass
     
-class UnitOutput(UnitBase):
-    id: int | None = None
-    stock_number: str | None = None
+class UnitOutput(BaseModel):
+    id: int | None = Field(None, serialization_alias="unit_id")
+    list_date: datetime | None = None
     purchase_date: datetime | None = None
     sold_date: datetime | None = None
     purchase_price: int | None = None
-    vehicle_age: int | None = None
     transportation_fee: int | None = None
-    transportation_distance: int | None = None
     transport_company: str | None = None
+    delivery_status: str | None = None
     vehicle_cost: int | None = None
-    maxoffer_value: int | None = None
-    maxoffer_clock: int | None = None
     sold_status: bool | None = None
     purchased: bool | None = None
     is_expired: bool | None = None
@@ -58,12 +53,10 @@ class UnitOutput(UnitBase):
     retail_back_gross: int | None = None
     wholesale_gross: int | None = None
     total_retail_gross: int | None = None
-    delivery_status: str | None = None
     buy_fee: int | None = None
     purchased_by: int | None = None
-    added_by: int | None = None
 
-    vehicle: vehicles_schema.VehicleOutput | None = None
+    vehicle: vehicles_schema.VehicleOutput | None =  Field(None, description="Vehicle object")
     store: stores_schema.StoreOutput | None = None
     
 
