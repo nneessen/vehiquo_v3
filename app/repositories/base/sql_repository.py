@@ -54,20 +54,21 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
         try:
             stmt = select(self.model).offset(skip).limit(limit)
 
-            # Apply filters if provided
+            # Apply filters if provided - filter only applies to the main model
             if filter:
                 stmt = stmt.filter_by(**filter)
 
             # Control the loading of related entities
             if to_join and models_to_join:
                 for model in models_to_join:
-                    stmt = stmt.join(model)  # Join each model in the list
+                    stmt = stmt.join(model)
                     if joined_model_filters:
                         stmt = stmt.filter_by(**joined_model_filters)
             else:
-                # Apply default or specified loading strategy (e.g., selectinload or lazyload)
                 for relationship in self.model.__mapper__.relationships:
-                    stmt = stmt.options(selectinload(relationship.key))
+                    # use class-bound attribute instead of string or error occurs
+                    relationship_attr = getattr(self.model, relationship.key)
+                    stmt = stmt.options(selectinload(relationship_attr))
 
             entities = self.db.execute(stmt).scalars().all()
             return entities

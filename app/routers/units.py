@@ -58,7 +58,7 @@ def get_units(db: Session = Depends(get_db),
 
     models_to_join_classes = []
 
-    if models_to_join:
+    if to_join and models_to_join:
         models_to_join_classes = [map_string_to_model(model) for model in models_to_join.split(",")]
     
     units = unit_service.get_units(
