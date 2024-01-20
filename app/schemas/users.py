@@ -26,7 +26,7 @@ class UserBase(BaseModel):
         max_length=50, 
         description="Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one number."
     )
-    phone_number: str | None = Field(None, min_length=10, max_length=10)
+    phone_number: str | None = Field(None)
     model_config: ConfigDict = ConfigDict(
         from_attributes=True, 
         populate_by_name=True,
@@ -65,6 +65,9 @@ class UserOutput(BaseModel):
     store: StoreOutput = None
 
 class UserCreate(UserBase):
+    is_admin: bool | None = Field(None)
+    is_superuser: bool | None = Field(None)
+    is_active: bool | None = Field(None)
     store_id: int | None = Field(None, description="The ID of the store the user belongs to.")
 
 

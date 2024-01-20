@@ -20,7 +20,7 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
             result = self.db.execute(stmt)
             self.db.commit()
             inserted_id = result.inserted_primary_key[0]
-            return self.db.query(self.model).get(inserted_id)
+            return Session.get(self.db, self.model, inserted_id)
         except Exception as e:
             self.db.rollback()
             raise e

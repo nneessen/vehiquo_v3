@@ -4,32 +4,18 @@ from fastapi.testclient import TestClient
 from fastapi import status
 from sqlalchemy.orm import Session
 
-from app.schemas.stores import StoreUpdate, StoreDelete, StoreOutput, Store
+from app.schemas.stores import StoreUpdate, StoreDelete, StoreOutput, StoreCreate
 from app.services.stores import create_store, get_store_by_id
 
+from test.utils.store_randomizer import random_store_create
 
 #✅
 # def test_create_store(client: TestClient, db: Session) -> None:
-#     """
-#     GIVEN a FastAPI application
-#     WHEN the POST endpoint '/api/v1/stores/' is requested
-#     THEN check that the response is valid
-#     """
-#     store_data = {
-#         "name": "N/A",
-#         "street_address": "N/A",
-#         "city": "N/A",
-#         "state": "N/A",
-#         "zip_code": 60610,
-#         "phone": "1111111111",
-#         "admin_clerk_1": "N/A",
-#         "is_primary_hub": True,
-#         "qb_customer_id": 1,
-#     }
-#     r = client.post("/api/v1/stores/", json=store_data)
-#     assert 200 <= r.status_code < 300
-#     store_data = r.json()
-#     assert store_data["name"] == store_data["name"]
+#     for i in range(25):
+#         random_store = random_store_create()
+#         store_in = dict(StoreCreate(**random_store))
+#         r = client.post("/api/v1/stores/", json=store_in)
+#         assert 200 <= r.status_code < 300
 
 
 #✅

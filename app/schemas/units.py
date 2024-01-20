@@ -72,9 +72,9 @@ class UnitCreateOutput(BaseModel):
     purchased_by: int | None = None
     added_by: int | None = None
 
-    # vehicle: vehicles_schema.VehicleOutput | None = None
-    # store: stores_schema.StoreOutput | None = None
-    # user: users_schema.UserOutput | None = None
+    vehicle: vehicles_schema.VehicleOutput | None = None
+    store: stores_schema.StoreOutput | None = None
+    user: users_schema.UserOutput | None = None
 
 
 class Unit(UnitBase):
