@@ -30,6 +30,6 @@ class Store(SerializerMixin, Base):
     is_primary_hub = Column(Boolean, nullable=True, default=False)
     qb_customer_id = Column(Integer, nullable=True)
     
-    users = relationship("User", back_populates="store")
-    units = relationship("Unit", back_populates="store")
+    users = relationship("User", back_populates="store", lazy="select")
+    units = relationship("Unit", back_populates="store", lazy='select')
     

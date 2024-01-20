@@ -46,13 +46,12 @@ class Unit(SerializerMixin, Base):
     delivery_status = Column(String, nullable=True, default="N/A")
     buy_fee = Column(Integer, nullable=True, default=250)
     
-    store = relationship("Store", back_populates="units")
+    store = relationship("Store", back_populates="units", lazy="select")
     store_id = Column(Integer, ForeignKey("stores.id"))
 
-    vehicle = relationship("Vehicle", back_populates="units")
+    vehicle = relationship("Vehicle", back_populates="units", lazy="select")
     vehicle_id = Column(Integer, ForeignKey("vehicles.id"))
 
     purchased_by = Column(Integer, ForeignKey("users.id"))
     added_by = Column(Integer, ForeignKey("users.id"))
 
-    

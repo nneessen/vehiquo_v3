@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, List, Type, Optional
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import selectinload, joinedload
+
 from sqlalchemy import select, and_, update, delete, insert, exists, func
 from app.repositories.base.sql_repository_base import SqlRepositoryBase
 
@@ -51,13 +53,21 @@ class SqlRepository(SqlRepositoryBase[T], ABC):
         ) -> List[T]:
         try:
             stmt = select(self.model).offset(skip).limit(limit)
+
+            # Apply filters if provided
             if filter:
                 stmt = stmt.filter_by(**filter)
+
+            # Control the loading of related entities
             if to_join and models_to_join:
                 for model in models_to_join:
                     stmt = stmt.join(model)  # Join each model in the list
                     if joined_model_filters:
                         stmt = stmt.filter_by(**joined_model_filters)
+            else:
+                # Apply default or specified loading strategy (e.g., selectinload or lazyload)
+                for relationship in self.model.__mapper__.relationships:
+                    stmt = stmt.options(selectinload(relationship.key))
 
             entities = self.db.execute(stmt).scalars().all()
             return entities

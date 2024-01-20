@@ -35,8 +35,4 @@ class Vehicle(SerializerMixin, Base):
     msrp = Column(Integer, nullable=True)
     
     # Relationships
-    units = relationship('Unit', back_populates='vehicle')
-    
-    
-    def as_dict(self):
-        return self.serialize(exclude=["units"])
+    units = relationship('Unit', back_populates='vehicle', lazy='select')

@@ -6,7 +6,9 @@ from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
 
+from app.models.units import Unit
 from app.models.vehicles import Vehicle
+from app.models.stores import Store
 
 from app.schemas import units as units_schema
 from app.schemas import vehicles as vehicles_schema
@@ -39,14 +41,16 @@ def create_unit(
 #✅
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[UnitResponseModel])
 def get_units(db: Session = Depends(get_db), 
-              skip: int = 0,
-              limit: int = 100,
-              filter_key: Optional[str] = None,
-              filter_value: Optional[str] = None,
-              to_join: bool = False,
-              models_to_join: Optional[str] = None, # comma separated string of models to join
-              joined_model_filter_key: Optional[str] = None,
-              joined_model_filter_value: Optional[str] = None
+    skip: int = 0,
+    limit: int = 100,
+    filter_key: Optional[str] = None,
+    filter_value: Optional[str] = None,
+    to_join: bool = False,
+    models_to_join: Optional[Any] = None, # comma separated string of models to join
+    joined_model_filter_key: Optional[str] = None,
+    joined_model_filter_value: Optional[str] = None,
+    include_vehicle: bool = False,
+    include_store: bool = False
     ) -> UnitResponseModel:
 
     filter = {filter_key: filter_value} if filter_key and filter_value else None
@@ -64,7 +68,9 @@ def get_units(db: Session = Depends(get_db),
         filter=filter, 
         to_join=to_join, 
         models_to_join=models_to_join_classes, 
-        joined_model_filters=joined_model_filters
+        joined_model_filters=joined_model_filters,
+        include_vehicle=include_vehicle,
+        include_store=include_store
     )
     
     if not units:

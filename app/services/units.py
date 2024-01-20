@@ -37,10 +37,12 @@ def get_units(db: Session,
     filter: Optional[dict] = None,
     to_join: bool = False,
     models_to_join: Optional[List[str]] = None,
-    joined_model_filters: Optional[dict] = None
+    joined_model_filters: Optional[dict] = None,
+    include_vehicle: bool = False,
+    include_store: bool = False
     ) -> List[unit_model.Unit]:
     db_units = UNIT_OF_WORK(db).units.get_all_units(skip, limit, filter, to_join, models_to_join, joined_model_filters)
-    return [db_unit.serialize() for db_unit in db_units]
+    return [db_unit.serialize(include_vehicle=include_vehicle, include_store=include_store) for db_unit in db_units]
 
 
 def delete_unit(db: Session, unit_id: int) -> unit_model.Unit:
