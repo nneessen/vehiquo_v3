@@ -33,4 +33,5 @@ def create_random_unit_data() -> Dict:
         "transportation_fee": random_transportation_fee(),
         "transportation_distance": random_transportation_distance(),
         "transport_company": random_transport_company(),
+        "store_id": random.randint(2, 25),
     }
