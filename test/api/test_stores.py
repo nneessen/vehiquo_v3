@@ -19,7 +19,7 @@ from test.utils.store_randomizer import random_store_create
 
 
 #✅
-# def test_create_store_with_duplicate_store_name(client: TestClient, db: Session) -> None:
+# def test_create_store_with_duplicate_store_name_should_fail(client: TestClient, db: Session) -> None:
 #     """
 #     GIVEN a FastAPI application
 #     WHEN the POST endpoint '/api/v1/stores/' is requested and store name already exists

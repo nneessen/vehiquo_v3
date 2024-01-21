@@ -28,6 +28,7 @@ from app.config import ALGORITHM
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/token")
 
+SESSION = Annotated[Session, Depends(get_db)]
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):

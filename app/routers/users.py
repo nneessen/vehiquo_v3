@@ -21,6 +21,7 @@ from app.utils.mapper import map_string_to_model
 
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
+from app.routers.security.dependencies import CURRENT_USER, SESSION
 
 UserResponseModel = Annotated[schemas.UserOutput, Literal["UserResponseModel"]]
 
@@ -28,7 +29,7 @@ router = APIRouter(tags=["Users"])
 
 
 @router.post("/token", response_model=token_schema.Token)
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)) -> Any:
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends(CURRENT_USER)], db: SESSION) -> Any:
     """
     OAuth2 compatible token login, get an access token for future requests
     """
@@ -48,8 +49,8 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: 
     return {"access_token": access_token, "token_type": "bearer"}
 
 #✅
-@router.post("/users/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOutput)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)) -> schemas.UserOutput:
+@router.post("/users/", status_code=status.HTTP_201_CREATED, response_model=UserResponseModel)
+def create_user(user: schemas.UserCreate, db: SESSION) -> schemas.UserOutput:
     db_user = user_service.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(
@@ -68,8 +69,8 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)) -> sche
     return {"Status": "Success", "User": db_user}
 
 
-@router.get("/users/{user_id}", status_code=status.HTTP_200_OK, response_model=schemas.UserOutput)
-def get_user(user_id: int, db: Session = Depends(get_db)) -> schemas.UserOutput:
+@router.get("/users/{user_id}", status_code=status.HTTP_200_OK, response_model=UserResponseModel)
+def get_user(user_id: int, db: SESSION) -> schemas.UserOutput:
     user = user_service.get_user_by_id(db, user_id=user_id)
     if not user:
         raise HTTPException(
@@ -80,7 +81,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)) -> schemas.UserOutput:
 
 
 @router.get("/users/", status_code=status.HTTP_200_OK, response_model=List[UserResponseModel])
-def get_users(db: Session = Depends(get_db), 
+def get_users(db: SESSION, 
               skip: int = 0,
               limit: int = 100,
               filter_key: Optional[str] = None,
@@ -120,15 +121,13 @@ def get_users(db: Session = Depends(get_db),
 
 
 @router.delete("/users/{user_id}", status_code=status.HTTP_200_OK)
-def delete_user(user_id: int, db: Session = Depends(get_db)):
+def delete_user(user_id: int, db: SESSION):
     delete_result = user_service.delete_user(db, user_id=user_id)
     if delete_result["Status"] == "Failed":
         return delete_result
     return delete_result
 
-    
 
-
-@router.get("/users/me/", response_model=schemas.UserOutput)
-def read_users_me(current_user: Annotated[schemas.UserOutput, Depends(get_current_active_user)]):
+@router.get("/users/me/", response_model=UserResponseModel)
+def read_users_me(db: SESSION, current_user: CURRENT_USER):
     return current_user
