@@ -15,7 +15,7 @@ from app.schemas import units as unit_schema
 from app.unit_of_work.unit_of_work import UNIT_OF_WORK, UnitOfWork
 
 
-def create_store(db: Session, store: store_schema.StoreCreate) -> store_model.Store:
+def create_store(db: Session, store: store_schema.StoreAdd) -> store_model.Store:
     with UnitOfWork(db) as uow:
         uow.stores.add_store(store)
         uow.commit()
@@ -24,14 +24,17 @@ def create_store(db: Session, store: store_schema.StoreCreate) -> store_model.St
 
 
 def delete_store(db: Session, store_id: int) -> None:
-    UNIT_OF_WORK(db).stores.delete_store(store_id)
-    db.commit()
+    with UnitOfWork(db) as uow:
+        uow.stores.delete_store(store_id)
+        uow.commit()
     return None
 
 
 def get_store_by_id(db: Session, store_id: int) -> Optional[store_model.Store]:
-    store = UNIT_OF_WORK(db).stores.get_store(store_id)
-    return store.serialize() if store else None
+    with UnitOfWork(db) as uow:
+        store = uow.stores.get_store_by_id(store_id)
+        return store.serialize() if store else None
+    
 
 def get_stores(db: Session, 
     skip: int = 0, 

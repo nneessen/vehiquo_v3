@@ -22,30 +22,31 @@ router = APIRouter(prefix="/stores", tags=["Stores"])
 
 StoreResponseModel = Annotated[stores_schema.StoreOutput, Literal["Default Store Response Model"]]
 
-
+#✅
 @router.post("/", status_code=status.HTTP_201_CREATED,response_model=StoreResponseModel)
 def create_store(
     current_user: CURRENT_USER,
-    store: stores_schema.StoreCreate, 
+    store: stores_schema.StoreAdd, 
     db: SESSION) -> StoreResponseModel:
-    if current_user.is_admin == True:
-        db_store = store_service.create_store(db, store=store)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=401, detail="Admin access required")
 
-        if db_store is None:
-            raise HTTPException(status_code=404, detail="Store not found")
-        return db_store
-    return HTTPException(status_code=401, detail="Admin access required")
+    db_store = store_service.create_store(db, store=store)
+    if db_store is None:
+        raise HTTPException(status_code=404, detail="Store not found")
+    return db_store
 
 
 @router.delete("/{store_id}", response_model=Optional[StoreResponseModel])
 def delete_store(current_user: CURRENT_USER, store_id: int, db: SESSION) -> Optional[StoreResponseModel]:
-    if current_user.is_admin:
-        db_store = store_service.get_store_by_id(db, store_id)
-        if not db_store:
-            return {"Status": "Failure", "Message": f"Store with {store_id} does not exist"}
-        store_service.delete_store(db, store_id)
-        return {"Status": "Success", "Message": f"Store with {store_id} has bee successfully deleted!"}
-    return HTTPException(status_code=401, detail="Admin access required")
+    if not current_user.is_admin:
+        return HTTPException(status_code=401, detail="Admin access required")
+
+    db_store = store_service.get_store_by_id(db, store_id)
+    if not db_store:
+        return {"Status": "Failure", "Message": f"Store with {store_id} does not exist"}
+    store_service.delete_store(db, store_id)
+    return {"Status": "Success", "Message": f"Store with {store_id} has bee successfully deleted!"}
 
 
 @router.get("/{store_id}", status_code=status.HTTP_200_OK, response_model=StoreResponseModel)

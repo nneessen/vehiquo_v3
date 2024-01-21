@@ -22,7 +22,8 @@ class StoreBase(BaseModel):
         extra="ignore"
     )
 
-class StoreCreate(StoreBase):
+
+class StoreAdd(StoreBase):
     pass
 
 
