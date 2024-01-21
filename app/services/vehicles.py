@@ -1,22 +1,16 @@
 from typing import List, Optional
-from sqlalchemy.orm import Session
-from fastapi import HTTPException
+
 from datetime import datetime
 
+from fastapi import HTTPException
+
+from sqlalchemy.orm import Session
+
 from app.models import vehicles as models
+
 from app.schemas import vehicles as schemas
 
 from app.unit_of_work.unit_of_work import UnitOfWork
-
-def get_vehicle_by_id(db: Session, vehicle_id: int) -> Optional[models.Vehicle]:
-    with UnitOfWork(db) as uow:
-        db_vehicle = uow.vehicles.get_vehicle(vehicle_id)
-        return db_vehicle.serialize() if db_vehicle else None
-
-
-def get_vehicles(db: Session, skip: int = 0, limit: int = 100) -> List[models.Vehicle]:
-    return db.query(models.Vehicle).offset(skip).limit(limit).all()
-
 
 def create_vehicle(db: Session, vehicle: schemas.VehicleAdd) -> models.Vehicle:
     with UnitOfWork(db) as uow:
@@ -25,6 +19,26 @@ def create_vehicle(db: Session, vehicle: schemas.VehicleAdd) -> models.Vehicle:
         uow.refresh(db_vehicle)
         return db_vehicle.serialize() if db_vehicle else None
 
+
+def get_vehicle_by_id(db: Session, vehicle_id: int) -> Optional[models.Vehicle]:
+    with UnitOfWork(db) as uow:
+        db_vehicle = uow.vehicles.get_vehicle(vehicle_id)
+        return db_vehicle.serialize() if db_vehicle else None
+
+
+def get_vehicles(
+    db: Session,
+    skip: int = 0, 
+    limit: int = 100,
+    filter: Optional[dict] = None,
+    to_join: bool = False,
+    models_to_join: Optional[List[str]] = None,
+    joined_model_filters: Optional[dict] = None,
+    include_unit_model: bool = False,
+    ) -> List[models.Vehicle]:
+    db_vehicles = UnitOfWork(db).vehicles.get_all_vehicles(
+        skip, limit, filter, to_join, models_to_join, joined_model_filters)
+    return [db_vehicle.serialize(include_unit_model=include_unit_model) for db_vehicle in db_vehicles]
 
 def delete_vehicle(db: Session, vehicle_id: int) -> models.Vehicle:
 

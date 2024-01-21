@@ -22,6 +22,7 @@ def create_unit(db: Session, unit: unit_schema.UnitAdd, vehicle: vehicle_schema.
             db_vehicle = uow.vehicles.add_vehicle(vehicle)
             db_unit.vehicle_id = db_vehicle.id
             uow.commit()
+            uow.refresh(db_unit), uow.refresh(db_vehicle)
             return db_unit.serialize() if db_unit else None
 
 

@@ -17,8 +17,6 @@ from app.schemas import users as user_schema
 
 from app.services import units as unit_service
 
-from app.routers.security.dependencies import oauth2_scheme
-
 from app.utils.mapper import map_string_to_model
 
 

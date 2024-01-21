@@ -4,27 +4,25 @@ from fastapi.testclient import TestClient
 from fastapi import status
 from sqlalchemy.orm import Session
 
-from app.schemas.users import UserCreate
-from app.services.users import get_user_by_email, create_user, get_user_by_username, get_user
+from app.schemas.users import UserCreate, UserDelete, UserOutput, UserUpdate
+from app.services.users import get_user_by_email, create_user, get_user_by_username, get_user, get_user_by_id
 from test.utils.user_randomizer import random_user_create, create_admin
 
 
-
-    
-# def test_create_admin(client: TestClient, db: Session) -> None:
-#     admin_user_data = create_admin()
-#     user_in = dict(UserCreate(**admin_user_data))
-#     r = client.post("/api/v1/users/", json=user_in)
-#     assert 200 <= r.status_code < 300
+def test_create_admin(client: TestClient, db: Session) -> None:
+    admin_user_data = create_admin()
+    user_in = dict(UserCreate(**admin_user_data))
+    r = client.post("/api/v1/users/", json=user_in)
+    assert 200 <= r.status_code < 300
 
 
-# def test_create_users(client: TestClient, db: Session) -> None:
-#     for i in range(50):
-#         random_user_data = random_user_create()
-#         user_in = dict(UserCreate(**random_user_data))
-#         r = client.post("/api/v1/users/", json=user_in)
-#         assert 200 <= r.status_code < 300
-    
+def test_create_users(client: TestClient, db: Session) -> None:
+    for i in range(49):
+        random_user_data = random_user_create()
+        user_in = dict(UserCreate(**random_user_data))
+        r = client.post("/api/v1/users/", json=user_in)
+        assert 200 <= r.status_code < 300
+
 
 # def test_create_user_with_existing_email(client: TestClient) -> None:
 #     """
@@ -35,8 +33,8 @@ from test.utils.user_randomizer import random_user_create, create_admin
 #     user_data = {
 #         "first_name": "Nick",
 #         "last_name": "Neessen",
-#         "email": "elqsqdstqsjqjajirnqtpqbxy@nsnisnpkztolnsikawejjindp.com",
-#         "username": "abzrpjjdblejwldnmtyazyfmx",
+#         "email": "nick.neessen@gmail.com",
+#         "username": "admin",
 #         "password": "password",
 #         "phone_number": "8594335907",
 #     }

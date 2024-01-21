@@ -14,7 +14,7 @@ def test_create_unit(client: TestClient, db: Session) -> None:
     WHEN the POST endpoint '/api/v1/units/' is requested
     THEN check that the response is valid
     """
-    for i in range(500):
+    for i in range(1000):
         random_unit = create_random_unit_data()
         random_vehicle = create_random_vehicle_data()
         response = client.post("/api/v1/units/", json={"unit": random_unit, "vehicle": random_vehicle})

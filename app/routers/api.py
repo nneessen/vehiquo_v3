@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.config import ROUTE_PREFIX_V1
 
-from . import users, home, units, stores
+from . import users, home, units, stores, vehicles
 
 router = APIRouter()
 
@@ -12,5 +12,6 @@ def include_api_routes():
     router.include_router(home.router, prefix=ROUTE_PREFIX_V1)
     router.include_router(units.router, prefix=ROUTE_PREFIX_V1)
     router.include_router(stores.router, prefix=ROUTE_PREFIX_V1)
+    router.include_router(vehicles.router, prefix=ROUTE_PREFIX_V1)
 
 include_api_routes()

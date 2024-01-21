@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field, ConfigDict
+from datetime import datetime
 
+from pydantic import BaseModel, Field, ConfigDict
 
 class VehicleBase(BaseModel):
     year: int | None = Field(None, ge=2000, le=2024)
@@ -36,9 +37,14 @@ class VehicleUpdate(VehicleBase, validate_assignment=True):
 class VehicleDelete(VehicleBase):
     pass
 
+class VehicleUnit(BaseModel):
+    id: int | None = None
+    list_date: datetime | None = None
+
 
 class VehicleOutput(VehicleBase):
     id: int | None = None
+    unit: VehicleUnit | None = None
 
 
 class Vehicle(VehicleBase):

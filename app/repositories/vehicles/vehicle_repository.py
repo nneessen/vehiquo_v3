@@ -21,3 +21,15 @@ class VehicleRepository(VehicleRepositoryBase, SqlRepository[Vehicle]):
     
     def get_vehicle(self, vehicle_id: int) -> Optional[Vehicle]:
         return super()._get(vehicle_id)
+    
+    def get_all_vehicles(self,
+        skip: int,
+        limit: int,
+        filter: Optional[dict] = None,
+        to_join: bool = False, 
+        models_to_join: Optional[List[str]] = None,
+        joined_model_filters: Optional[dict] = None
+    ) -> List[Vehicle]:
+        return super()._get_all(
+            skip, limit, filter, to_join, models_to_join, joined_model_filters
+        )

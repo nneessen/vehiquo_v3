@@ -10,12 +10,12 @@ from app.services.stores import create_store, get_store_by_id
 from test.utils.store_randomizer import random_store_create
 
 #✅
-# def test_create_store(client: TestClient, db: Session) -> None:
-#     for i in range(25):
-#         random_store = random_store_create()
-#         store_in = dict(StoreCreate(**random_store))
-#         r = client.post("/api/v1/stores/", json=store_in)
-#         assert 200 <= r.status_code < 300
+def test_create_store(client: TestClient, db: Session) -> None:
+    for i in range(25):
+        random_store = random_store_create()
+        store_in = dict(StoreCreate(**random_store))
+        r = client.post("/api/v1/stores/", json=store_in)
+        assert 200 <= r.status_code < 300
 
 
 #✅
