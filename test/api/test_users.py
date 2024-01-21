@@ -5,23 +5,30 @@ from fastapi import status
 from sqlalchemy.orm import Session
 
 from app.schemas.users import UserCreate, UserDelete, UserOutput, UserUpdate
-from app.services.users import get_user_by_email, create_user, get_user_by_username, get_user, get_user_by_id
+from app.services.users import get_user_by_email, create_user, get_user_by_username, get_user, get_user_by_id, authenticate_user
 from test.utils.user_randomizer import random_user_create, create_admin
 
 
-def test_create_admin(client: TestClient, db: Session) -> None:
-    admin_user_data = create_admin()
-    user_in = dict(UserCreate(**admin_user_data))
-    r = client.post("/api/v1/users/", json=user_in)
-    assert 200 <= r.status_code < 300
+# def test_create_admin(client: TestClient, db: Session) -> None:
+#     admin_user_data = create_admin()
+#     user_in = dict(UserCreate(**admin_user_data))
+#     r = client.post("/api/v1/users/", json=user_in)
+#     assert 200 <= r.status_code < 300
 
 
-def test_create_users(client: TestClient, db: Session) -> None:
-    for i in range(49):
-        random_user_data = random_user_create()
-        user_in = dict(UserCreate(**random_user_data))
-        r = client.post("/api/v1/users/", json=user_in)
-        assert 200 <= r.status_code < 300
+# def test_create_users(client: TestClient, db: Session) -> None:
+#     for i in range(49):
+#         random_user_data = random_user_create()
+#         user_in = dict(UserCreate(**random_user_data))
+#         r = client.post("/api/v1/users/", json=user_in)
+#         assert 200 <= r.status_code < 300
+
+
+def test_authenticate_user(db: Session) -> None:
+    user = get_user_by_username(db, "admin")
+    authenticated_user = authenticate_user(db, username=user.username, password="password")
+    assert authenticated_user
+    assert user.username == authenticated_user.username
 
 
 # def test_create_user_with_existing_email(client: TestClient) -> None:

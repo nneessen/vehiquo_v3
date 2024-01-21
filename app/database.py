@@ -11,7 +11,7 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db" #! FOR TESTING ONLY
 
 engine = create_engine(
     os.getenv("DB_URL", SQLALCHEMY_DATABASE_URL), 
-    echo=True,
+    # echo=True,
     connect_args={"check_same_thread": False},
     pool_pre_ping=True
 )

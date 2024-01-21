@@ -16,11 +16,12 @@ from app.services import vehicles as vehicle_services
 
 from app.utils.mapper import map_string_to_model
 
+from app.routers.security.dependencies import CURRENT_USER
 
 router = APIRouter(prefix="/vehicles", tags=["Vehicles"])
 
 
-VEHICLE_RESPONSE_MODEL = Annotated[vehicle_schemas.VehicleOutput, Literal["VehicleResponse"]]
+VEHICLE_RESPONSE_MODEL = Annotated[vehicle_schemas.VehicleOutput, Literal["Default Vehicle Response Model"]]
 
 
 @router.get("/{vehicle_id}", status_code=status.HTTP_200_OK, response_model=Optional[VEHICLE_RESPONSE_MODEL])

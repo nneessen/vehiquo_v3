@@ -33,7 +33,13 @@ class UnitDelete(UnitBase):
 
 class UnitExpire(UnitBase):
     pass
-    
+
+class UnitVehicle(BaseModel):
+    id: int | None = None
+    year: int | None = None
+    make: str | None = None
+    model: str | None = None
+
 class UnitOutput(BaseModel):
     id: int | None = Field(None, serialization_alias="unit_id")
     list_date: datetime | None = None
@@ -56,7 +62,7 @@ class UnitOutput(BaseModel):
     buy_fee: int | None = None
     purchased_by: int | None = None
 
-    vehicle: vehicles_schema.VehicleOutput | None =  Field(None, description="Vehicle object")
+    vehicle: UnitVehicle | None =  Field(None, description="Vehicle object")
     store: stores_schema.StoreOutput | None = None
     
 

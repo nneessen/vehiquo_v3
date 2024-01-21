@@ -15,6 +15,8 @@ from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
 
+from app.models.users import User
+
 from app.schemas.tokens import TokenData
 from app.schemas import users as user_schema
 
@@ -25,6 +27,7 @@ from app.config import ALGORITHM
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/token")
+
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
@@ -65,6 +68,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
         raise credentials_exception
     return user
 
+CURRENT_USER = Annotated[User, Depends(get_current_user)]
 
 async def get_current_active_user(current_user: Annotated[user_schema.UserBase, Depends(get_current_user)]
 ):

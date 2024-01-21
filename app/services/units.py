@@ -27,10 +27,16 @@ def create_unit(db: Session, unit: unit_schema.UnitAdd, vehicle: vehicle_schema.
 
 
 #✅
-def get_unit_by_id(db: Session, unit_id: int) -> Optional[unit_model.Unit]:
+def get_unit_by_id(
+    db: Session, 
+    unit_id: int,
+    include_vehicle: bool = False,
+    include_store: bool = False,
+) -> Optional[unit_model.Unit]:
         with UnitOfWork(db) as uow:
             db_unit = uow.units.get_unit(unit_id)
-            return db_unit.serialize(include_vehicle=False, include_store=False) if db_unit else None
+            return db_unit.serialize(
+                include_vehicle=include_vehicle, include_store=include_store) if db_unit else None
 
 
 #✅
@@ -45,8 +51,11 @@ def get_units(
     include_vehicle: bool = False,
     include_store: bool = False,
     ) -> List[unit_model.Unit]:
-    db_units = UNIT_OF_WORK(db).units.get_all_units(skip, limit, filter, to_join, models_to_join, joined_model_filters)
-    return [db_unit.serialize(include_vehicle=include_vehicle, include_store=include_store) for db_unit in db_units]
+
+    db_units = UNIT_OF_WORK(db).units.get_all_units(
+        skip, limit, filter, to_join, models_to_join, joined_model_filters)
+    return [db_unit.serialize(
+        include_vehicle=include_vehicle, include_store=include_store) for db_unit in db_units]
 
 
 def delete_unit(db: Session, unit_id: int) -> unit_model.Unit:

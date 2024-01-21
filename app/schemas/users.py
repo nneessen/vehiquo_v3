@@ -16,7 +16,7 @@ class UserBase(BaseModel):
     )
     username : str | None = Field(
         None, 
-        min_length=5, 
+        min_length=4, 
         max_length=25, 
         description="Username must be between 5 and 25 characters and can only contain letters, numbers, underscores, and dashes."
     )
