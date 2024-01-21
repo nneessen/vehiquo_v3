@@ -129,5 +129,5 @@ def delete_user(user_id: int, db: SESSION):
 
 
 @router.get("/users/me/", response_model=UserResponseModel)
-def read_users_me(db: SESSION, current_user: CURRENT_USER):
+def read_users_me(current_user: CURRENT_USER):
     return current_user

@@ -16,10 +16,11 @@ from app.unit_of_work.unit_of_work import UNIT_OF_WORK, UnitOfWork
 
 
 def create_store(db: Session, store: store_schema.StoreCreate) -> store_model.Store:
-    store = UNIT_OF_WORK(db).stores.add_store(store)
-    db.commit()
-    db.refresh(store)
-    return store.serialize() if store else None
+    with UnitOfWork(db) as uow:
+        uow.stores.add_store(store)
+        uow.commit()
+        uow.refresh(store)
+        return store.serialize() if store else None
 
 
 def delete_store(db: Session, store_id: int) -> None:
