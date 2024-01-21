@@ -2,6 +2,8 @@ from fastapi import Depends, FastAPI, Request, Response
 
 from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi.responses import RedirectResponse
+
 from starlette.exceptions import HTTPException
 
 from app.dependencies import get_query_token, get_token_header
@@ -43,6 +45,10 @@ def get_application() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    
+    @application.get("/")
+    def index():
+        return RedirectResponse(url="/docs")
     
     return application
 

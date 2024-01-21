@@ -49,12 +49,13 @@ def get_users(db: Session,
     filter: Optional[dict] = None,
     to_join: bool = False,
     models_to_join: Optional[List[str]] = None,
-    joined_model_filters: Optional[dict] = None
+    joined_model_filters: Optional[dict] = None,
+    include_store: bool = False,
     ) -> List[Optional[models.User]]:
     
     with UnitOfWork(db) as uow:
         users = uow.users.get_users(skip, limit, filter, to_join, models_to_join, joined_model_filters)
-        return [user.serialize() for user in users]
+        return [user.serialize(include_store=include_store) for user in users]
 
 #✅
 def get_user_by_id(db: Session, user_id: int) -> Optional[models.User]:

@@ -88,7 +88,8 @@ def get_users(db: Session = Depends(get_db),
               to_join: bool = False,
               models_to_join: Optional[str] = None, # comma separated string of models to join
               joined_model_filter_key: Optional[str] = None,
-              joined_model_filter_value: Optional[str] = None
+              joined_model_filter_value: Optional[str] = None,
+              include_store: bool = False,
     ) -> List[UserResponseModel]:
     
     filter = {filter_key: filter_value} if filter_key and filter_value else None
@@ -106,7 +107,8 @@ def get_users(db: Session = Depends(get_db),
         filter=filter,
         to_join=to_join, 
         models_to_join=models_to_join_classes,
-        joined_model_filters=joined_model_filters
+        joined_model_filters=joined_model_filters,
+        include_store=include_store
     )
 
     if not users:

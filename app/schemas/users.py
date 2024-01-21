@@ -33,7 +33,7 @@ class UserBase(BaseModel):
         arbitrary_types_allowed=True
     )
 
-class StoreOutput(BaseModel):
+class UserAndStore(BaseModel):
     id: int | None = None
     name: str | None = Field(..., max_length=50)
     street_address: str | None = Field(None, max_length=50)
@@ -42,6 +42,7 @@ class StoreOutput(BaseModel):
     zip_code: int | None = Field(None)
     phone: str | None = Field(None, max_length=50)
     admin_clerk_1: str | None = Field(None, max_length=50, description="Admin Clerk 1")
+
 
 class UserOutput(BaseModel):
     id: int | None = None
@@ -62,7 +63,7 @@ class UserOutput(BaseModel):
     phone_number : str | None = None
     
     store_id: int | None = None
-    store: StoreOutput = None
+    store: UserAndStore = None
 
 class UserCreate(UserBase):
     is_admin: bool | None = Field(None)
