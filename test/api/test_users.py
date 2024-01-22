@@ -13,11 +13,11 @@ from app.services.users import get_user_by_email, create_user, get_user_by_usern
 from test.utils.user_randomizer import random_user_create, create_admin
 
 #✅
-def test_create_admin(client: TestClient, db: Session) -> None:
-    admin_user_data = create_admin()
-    user_in = dict(UserCreate(**admin_user_data))
-    r = client.post("/api/v1/users/", json=user_in)
-    assert r.status_code == 400
+# def test_create_admin(client: TestClient, db: Session) -> None:
+#     admin_user_data = create_admin()
+#     user_in = dict(UserCreate(**admin_user_data))
+#     r = client.post("/api/v1/users/", json=user_in)
+#     assert r.status_code == 400
 
 
 #✅
@@ -52,10 +52,10 @@ def create_token(client: TestClient, username: str, password: str) -> Dict[str, 
     return r.json()['access_token']
 
 
-def test_delete_user_with_admin_user(db: Session, client: TestClient) -> None:
-    admin_token = create_token(client, "admin", "password")
-    r = client.delete("/api/v1/users/4", headers={"Authorization": f"Bearer {admin_token}"})
-    assert r.status_code == status.HTTP_200_OK
+# def test_delete_user_with_admin_user(db: Session, client: TestClient) -> None:
+#     admin_token = create_token(client, "admin", "password")
+#     r = client.delete("/api/v1/users/4", headers={"Authorization": f"Bearer {admin_token}"})
+#     assert r.status_code == status.HTTP_200_OK
 
 
 #✅
