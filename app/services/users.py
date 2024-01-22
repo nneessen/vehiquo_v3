@@ -14,6 +14,39 @@ from app.unit_of_work.unit_of_work import UnitOfWork
 from app.utils.decorators import timeit
 
 
+
+# ✅ Takes 0.1808s to create user
+def create_user(db: Session, user: schemas.UserCreate) -> models.User:
+    try:
+        with UnitOfWork(db) as uow:
+            db_user = uow.users.add_user(user)
+            db_user.hashed_password = hash_password(user.password)
+            db_user.password = None
+            uow.commit()
+    except (IntegrityError, InvalidRequestError, FlushError) as e:
+        error_details = {
+            IntegrityError: "Email or username already registered",
+            InvalidRequestError: "Invalid request",
+            FlushError: "Flush error",
+        }
+        detail = error_details.get(type(e), "Unknown error")
+        return {"Status": "Failed", "Detail": detail}
+    return get_user_by_email(db, email=user.email)
+
+
+def get_user_by_id(db: Session, user_id: int) -> Optional[models.User]:
+    with UnitOfWork(db) as uow:
+        user = uow.users.get_user(user_id)
+        return user.serialize()
+
+
+def get_user_by_email(db: Session, email: str) -> Optional[models.User]:
+    return db.query(models.User).filter(models.User.email == email).first()
+
+
+def get_user_by_username(db: Session, username: str) -> Optional[models.User]:
+    return db.query(models.User).filter(models.User.username == username).first()
+
 # ✅
 def authenticate_user(
     db: Session, username: str, password: str
@@ -60,47 +93,6 @@ def get_users(
         return [user.serialize(include_store=include_store) for user in users]
 
 
-# ✅
-def get_user_by_id(db: Session, user_id: int) -> Optional[models.User]:
-    with UnitOfWork(db) as uow:
-        user = uow.users.get_user(user_id)
-        return user.serialize()
-
-
-def get_user_by_email(db: Session, email: str) -> Optional[models.User]:
-    return db.query(models.User).filter(models.User.email == email).first()
-
-
-def get_user_by_username(db: Session, username: str) -> Optional[models.User]:
-    return db.query(models.User).filter(models.User.username == username).first()
-
-
-def confirm(db: Session, user: models.User) -> models.User:
-    user.confirmed = True
-    db.commit()
-    db.refresh(user)
-    return user
-
-
-# ✅ Takes 0.1808s to create user
-def create_user(db: Session, user: schemas.UserCreate) -> models.User:
-    try:
-        with UnitOfWork(db) as uow:
-            db_user = uow.users.add_user(user)
-            db_user.hashed_password = hash_password(user.password)
-            db_user.password = None
-            uow.commit()
-    except (IntegrityError, InvalidRequestError, FlushError) as e:
-        error_details = {
-            IntegrityError: "Email or username already registered",
-            InvalidRequestError: "Invalid request",
-            FlushError: "Flush error",
-        }
-        detail = error_details.get(type(e), "Unknown error")
-        return {"Status": "Failed", "Detail": detail}
-    return get_user_by_email(db, email=user.email)
-
-
 # ✅ Takes 0.0093s to delete user
 def delete_user(db: Session, user_id: int) -> None:
     user = get_user_by_id(db, user_id=user_id)
@@ -113,6 +105,14 @@ def delete_user(db: Session, user_id: int) -> None:
             return {"Status": "Success", "Detail": "User deleted successfully"}
     except Exception as e:
         return {"Status": "Failed", "Detail": f"Error deleting user with id {user_id}"}
+
+
+# ✅
+def confirm(db: Session, user: models.User) -> models.User:
+    user.confirmed = True
+    db.commit()
+    db.refresh(user)
+    return user
 
 
 def activate_user(db: Session, user_id: int) -> models.User:

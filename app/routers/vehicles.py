@@ -5,8 +5,11 @@ from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
 from app.models.vehicles import Vehicle
-from app.routers.security.dependencies import (CURRENT_USER, SESSION,
-                                               get_current_active_user)
+from app.routers.security.dependencies import (
+    CURRENT_USER, 
+    SESSION,
+    get_current_active_user
+    )
 from app.schemas import vehicles as vehicle_schemas
 from app.services import vehicles as vehicle_services
 from app.utils.mapper import map_string_to_model
@@ -14,16 +17,10 @@ from app.utils.mapper import map_string_to_model
 router = APIRouter(prefix="/vehicles", tags=["Vehicles"])
 
 
-VEHICLE_RESPONSE_MODEL = Annotated[
-    vehicle_schemas.VehicleOutput, Literal["Default Vehicle Response Model"]
-]
+VEHICLE_RESPONSE_MODEL = Annotated[vehicle_schemas.VehicleOutput, Literal["Default Vehicle Response Model"]]
 
 
-@router.get(
-    "/{vehicle_id}",
-    status_code=status.HTTP_200_OK,
-    response_model=Optional[VEHICLE_RESPONSE_MODEL],
-)
+@router.get("/{vehicle_id}",status_code=status.HTTP_200_OK,response_model=Optional[VEHICLE_RESPONSE_MODEL],)
 def get_vehicle(vehicle_id: int, db: SESSION) -> Optional[VEHICLE_RESPONSE_MODEL]:
     db_vehicle = vehicle_services.get_vehicle_by_id(db, vehicle_id=vehicle_id)
     if not db_vehicle:
@@ -34,9 +31,7 @@ def get_vehicle(vehicle_id: int, db: SESSION) -> Optional[VEHICLE_RESPONSE_MODEL
     return db_vehicle
 
 
-@router.get(
-    "/", status_code=status.HTTP_200_OK, response_model=List[VEHICLE_RESPONSE_MODEL]
-)
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[VEHICLE_RESPONSE_MODEL])
 def get_vehicles(
     db: SESSION,
     skip: int = 0,
@@ -67,6 +62,7 @@ def get_vehicles(
         db,
         skip=skip,
         limit=limit,
+        filter=filter,
         to_join=to_join,
         models_to_join=models_to_join_classes,
         joined_model_filters=joined_model_filters,
