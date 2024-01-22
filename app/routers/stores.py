@@ -19,9 +19,7 @@ StoreResponseModel = Annotated[
 ]
 
 # ✅
-@router.post(
-    "/", status_code=status.HTTP_201_CREATED, response_model=StoreResponseModel
-)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=StoreResponseModel)
 def create_store(
     current_user: CURRENT_USER, store: stores_schema.StoreAdd, db: SESSION
 ) -> StoreResponseModel:

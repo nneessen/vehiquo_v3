@@ -1,20 +1,15 @@
 from typing import List, Optional
 
-from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.models import stores as store_model
-from app.models import units as unit_model
-from app.models import users as user_model
 from app.schemas import stores as store_schema
-from app.schemas import units as unit_schema
-from app.schemas import users as user_schema
 from app.unit_of_work.unit_of_work import UNIT_OF_WORK, UnitOfWork
 
 
 def create_store(db: Session, store: store_schema.StoreAdd) -> store_model.Store:
     with UnitOfWork(db) as uow:
-        uow.stores.add_store(store)
+        store = uow.stores.add_store(store)
         uow.commit()
         uow.refresh(store)
         return store.serialize() if store else None
@@ -29,7 +24,7 @@ def delete_store(db: Session, store_id: int) -> None:
 
 def get_store_by_id(db: Session, store_id: int) -> Optional[store_model.Store]:
     with UnitOfWork(db) as uow:
-        store = uow.stores.get_store_by_id(store_id)
+        store = uow.stores.get_store(store_id)
         return store.serialize() if store else None
 
 
