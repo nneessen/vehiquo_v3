@@ -1,10 +1,7 @@
 from typing import List
 
 from starlette.config import Config
-
 from starlette.datastructures import CommaSeparatedStrings
-
-
 
 API_PREFIX = "/api"
 

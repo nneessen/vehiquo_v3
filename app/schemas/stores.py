@@ -1,8 +1,7 @@
-from pydantic import BaseModel, Field, ConfigDict
-
 from datetime import datetime
+from typing import List, Optional
 
-from typing import Optional, List
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class StoreBase(BaseModel):
@@ -17,9 +16,7 @@ class StoreBase(BaseModel):
     qb_customer_id: int | None = Field(None)
 
     model_config: ConfigDict = ConfigDict(
-        from_attributes=True, 
-        populate_by_name=True,
-        extra="ignore"
+        from_attributes=True, populate_by_name=True, extra="ignore"
     )
 
 
@@ -40,6 +37,7 @@ class StoreUserOutput(BaseModel):
     id: int | None = Field(None)
     first_name: str | None = Field(None, max_length=50)
     last_name: str | None = Field(None, max_length=50)
+
 
 # for unit in StoreOutput.units:
 class StoreUnitOutput(BaseModel):
@@ -70,6 +68,8 @@ class StoreOutput(BaseModel):
     admin_clerk_1: str | None = Field(None, max_length=50, description="Admin Clerk 1")
     is_primary_hub: bool | None = Field(None)
     qb_customer_id: int | None = Field(None)
-    
-    users: List[StoreUserOutput] | None = Field(None, description="Users associated with this store")
+
+    users: List[StoreUserOutput] | None = Field(
+        None, description="Users associated with this store"
+    )
     # units: List[StoreUnitOutput] | None = Field(None, description="Units associated with this store")

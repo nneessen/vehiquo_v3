@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
+
 
 class VehicleBase(BaseModel):
     year: int | None = Field(None, ge=2000, le=2024)
@@ -10,14 +11,12 @@ class VehicleBase(BaseModel):
     vin: str | None = Field(None, max_length=17)
     mileage: int | None = Field(None, ge=0)
     color: str | None = Field(None, max_length=50)
-    
+
     model_config: ConfigDict = ConfigDict(
-        from_attributes=True, 
-        populate_by_name=True,
-        extra="ignore"
+        from_attributes=True, populate_by_name=True, extra="ignore"
     )
 
-    
+
 class VehicleAdd(VehicleBase):
     drivetrain: str | None = Field(None, max_length=50)
     transmission: str | None = Field(None, max_length=50)
@@ -36,6 +35,7 @@ class VehicleUpdate(VehicleBase, validate_assignment=True):
 
 class VehicleDelete(VehicleBase):
     pass
+
 
 class VehicleUnit(BaseModel):
     id: int | None = None

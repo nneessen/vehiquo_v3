@@ -2,8 +2,8 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from app.database import Base
-
 from app.models.mixins.core import SerializerMixin
+
 
 class User(SerializerMixin, Base):
     __tablename__ = "users"
@@ -23,7 +23,6 @@ class User(SerializerMixin, Base):
     is_blocked = Column(Boolean, default=False)
     is_admin = Column(Boolean, default=False)
     is_superuser = Column(Boolean, default=False)
-    
+
     store_id = Column(Integer, ForeignKey("stores.id"))
     store = relationship("Store", back_populates="users")
-    

@@ -1,19 +1,12 @@
 from datetime import datetime, timedelta
-from sqlalchemy import (
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    DateTime,
-    Float,
-    Boolean,
-)
+
+from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Integer,
+                        String)
 from sqlalchemy.orm import relationship
 
 from app.database import Base
-
 from app.models.mixins.core import SerializerMixin
+
 
 class Unit(SerializerMixin, Base):
     __tablename__ = "units"
@@ -23,7 +16,9 @@ class Unit(SerializerMixin, Base):
     purchase_date = Column(DateTime, nullable=True)
     list_date = Column(DateTime, nullable=True)
     sold_date = Column(DateTime, nullable=True)
-    expire_date = Column(DateTime, nullable=True, default=datetime.utcnow() + timedelta(minutes=1))
+    expire_date = Column(
+        DateTime, nullable=True, default=datetime.utcnow() + timedelta(minutes=1)
+    )
     purchase_price = Column(Integer, nullable=True, default=0)
     buy_now_price = Column(Integer, nullable=True, default=0)
     vehicle_age = Column(Integer, nullable=True, default=0)
@@ -45,7 +40,7 @@ class Unit(SerializerMixin, Base):
     zip_code_loc = Column(Integer, nullable=True, default=60610)
     delivery_status = Column(String, nullable=True, default="N/A")
     buy_fee = Column(Integer, nullable=True, default=250)
-    
+
     store = relationship("Store", back_populates="units", lazy="select")
     store_id = Column(Integer, ForeignKey("stores.id"))
 
@@ -54,4 +49,3 @@ class Unit(SerializerMixin, Base):
 
     purchased_by = Column(Integer, ForeignKey("users.id"))
     added_by = Column(Integer, ForeignKey("users.id"))
-

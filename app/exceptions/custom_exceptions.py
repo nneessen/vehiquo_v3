@@ -3,47 +3,59 @@ class CustomException(Exception):
         super().__init__(message)
         self.error_code = error_code
 
+
 #########################################################
-#^################## UNIT EXCEPTIONS ####################
+# ^################## UNIT EXCEPTIONS ####################
 #########################################################
+
 
 class AddUnitException(CustomException):
     pass
 
+
 class DeleteUnitException(CustomException):
     pass
+
 
 class UpdateUnitException(CustomException):
     pass
 
 
 #########################################################
-#^################## USER EXCEPTIONS ####################
+# ^################## USER EXCEPTIONS ####################
 #########################################################
 class AddUserException(CustomException):
     pass
 
+
 class DeleteUserException(CustomException):
     pass
+
 
 class UpdateUserException(CustomException):
     pass
 
+
 class GetUserException(CustomException):
     pass
 
+
 #########################################################
-#^################## STORE EXCEPTIONS ####################
+# ^################## STORE EXCEPTIONS ####################
 #########################################################
+
 
 class AddStoreException(CustomException):
     pass
 
+
 class DeleteStoreException(CustomException):
     pass
 
+
 class UpdateStoreException(CustomException):
     pass
+
 
 class GetStoreException(CustomException):
     pass

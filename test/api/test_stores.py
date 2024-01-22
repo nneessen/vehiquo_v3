@@ -5,17 +5,25 @@ from fastapi import status
 from sqlalchemy.orm import Session
 
 from app.schemas.stores import StoreUpdate, StoreDelete, StoreOutput, StoreAdd
+from app.schemas.users import UserLogin
+
 from app.services.stores import create_store, get_store_by_id
 
 from test.utils.store_randomizer import random_store_create
 
 #✅
-# def test_create_store(client: TestClient, db: Session) -> None:
-#     for i in range(25):
-#         random_store = random_store_create()
-#         store_in = dict(StoreCreate(**random_store))
-#         r = client.post("/api/v1/stores/", json=store_in)
-#         assert 200 <= r.status_code < 300
+def test_create_store(client: TestClient, db: Session) -> None:
+    creds = {"username": "admin", "password": "password"}
+    user_in = dict(UserLogin(**creds))
+    response = client.post("/api/v1/token/", data=user_in)
+    assert response.status_code == status.HTTP_200_OK
+    access_token = response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+    for i in range(25):
+        random_store = random_store_create()
+        store_in = dict(StoreAdd(**random_store))
+        r = client.post("/api/v1/stores/", headers=headers, json=store_in)
+        assert 200 <= r.status_code < 300
 
 
 #✅

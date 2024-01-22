@@ -1,10 +1,11 @@
-from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime, timedelta
 
+from pydantic import BaseModel, ConfigDict, Field
 
-from app.schemas import vehicles as vehicles_schema
 from app.schemas import stores as stores_schema
 from app.schemas import users as users_schema
+from app.schemas import vehicles as vehicles_schema
+
 
 class UnitBase(BaseModel):
     list_date: datetime | None = datetime.utcnow()
@@ -12,14 +13,13 @@ class UnitBase(BaseModel):
     buy_now_price: int | None = Field(None, ge=0)
     added_by: int | None = 2
     zip_code_loc: int | None = 60610
-    
+
     model_config: ConfigDict = ConfigDict(
-        from_attributes=True, 
+        from_attributes=True,
         populate_by_name=True,
         extra="ignore",
     )
-    
-    
+
 
 class UnitAdd(UnitBase):
     store_id: int | None = Field(1, description="Default store ID is 1.")
@@ -28,17 +28,21 @@ class UnitAdd(UnitBase):
 class UnitUpdate(UnitBase):
     pass
 
+
 class UnitDelete(UnitBase):
     pass
 
+
 class UnitExpire(UnitBase):
     pass
+
 
 class UnitVehicle(BaseModel):
     id: int | None = None
     year: int | None = None
     make: str | None = None
     model: str | None = None
+
 
 class UnitOutput(BaseModel):
     id: int | None = Field(None, serialization_alias="unit_id")
@@ -62,9 +66,8 @@ class UnitOutput(BaseModel):
     buy_fee: int | None = None
     purchased_by: int | None = None
 
-    vehicle: UnitVehicle | None =  Field(None, description="Vehicle object")
+    vehicle: UnitVehicle | None = Field(None, description="Vehicle object")
     store: stores_schema.StoreOutput | None = None
-    
 
 
 class UnitCreateOutput(BaseModel):

@@ -1,21 +1,14 @@
-from sqlalchemy import (
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    DateTime,
-    Float,
-    Boolean,
-)
+from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Integer,
+                        String)
 from sqlalchemy.orm import relationship
+
 from app.database import Base
 from app.models.mixins.core import SerializerMixin
 
 
 class Vehicle(SerializerMixin, Base):
     __tablename__ = "vehicles"
-    
+
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     year = Column(Integer, nullable=True)
     make = Column(String, nullable=True)
@@ -33,6 +26,6 @@ class Vehicle(SerializerMixin, Base):
     engine_cylinders = Column(Integer, nullable=True)
     category = Column(String, nullable=True)
     msrp = Column(Integer, nullable=True)
-    
+
     # Relationships
-    units = relationship('Unit', back_populates='vehicle', lazy='select')
+    units = relationship("Unit", back_populates="vehicle", lazy="select")

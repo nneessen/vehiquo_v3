@@ -1,35 +1,35 @@
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar, List, Optional
-
+from typing import Generic, List, Optional, TypeVar
 
 T = TypeVar("T")
 
-class SqlRepositoryBase(Generic[T], ABC):
 
+class SqlRepositoryBase(Generic[T], ABC):
     @abstractmethod
     def _add(self, entity: T) -> T:
         raise NotImplementedError()
-    
+
     @abstractmethod
     def _delete(self, entity_id: int):
         raise NotImplementedError()
-    
+
     @abstractmethod
     def _get(self, entity_id: int) -> Optional[T]:
         raise NotImplementedError()
-    
+
     @abstractmethod
-    def _get_all(self, 
-        skip: int, 
-        limit: int, 
-        filter: Optional[dict] = None, 
-        to_join: bool = False, 
+    def _get_all(
+        self,
+        skip: int,
+        limit: int,
+        filter: Optional[dict] = None,
+        to_join: bool = False,
         models_to_join: Optional[List[T]] = None,
-        joined_model_filters: Optional[dict] = None
-        ) -> List[T]:
+        joined_model_filters: Optional[dict] = None,
+    ) -> List[T]:
         """
         This method is used to get all rows from a table in the database with the option to apply filters and joins
-        
+
         Args:
             skip (int): Number of rows to skip
             limit (int): Maximum number of rows to return
@@ -41,7 +41,7 @@ class SqlRepositoryBase(Generic[T], ABC):
             List[T]: A list of rows from the database
         """
         raise NotImplementedError()
-    
+
     @abstractmethod
     def _update(self, entity: T, entity_id: int) -> T:
         raise NotImplementedError()
