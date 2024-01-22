@@ -15,17 +15,16 @@ from app.schemas import tokens as token_schema
 
 from app.services import users as user_service
 
-from app.routers.security.dependencies import get_current_active_user, create_access_token
-
 from app.utils.mapper import map_string_to_model
 
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
-from app.routers.security.dependencies import CURRENT_USER, SESSION
+from app.routers.security.dependencies import CURRENT_USER, SESSION, create_access_token
 
-UserResponseModel = Annotated[schemas.UserOutput, Literal["UserResponseModel"]]
 
 router = APIRouter(tags=["Users"])
+
+UserResponseModel = Annotated[schemas.UserOutput, Literal["UserResponseModel"]]
 
 
 @router.post("/token", response_model=token_schema.Token)
@@ -121,11 +120,16 @@ def get_users(db: SESSION,
 
 
 @router.delete("/users/{user_id}", status_code=status.HTTP_200_OK)
-def delete_user(user_id: int, db: SESSION):
-    delete_result = user_service.delete_user(db, user_id=user_id)
-    if delete_result["Status"] == "Failed":
+def delete_user(
+    current_user: CURRENT_USER,
+    user_id: int, 
+    db: SESSION):
+    if current_user and current_user.is_admin:
+        delete_result = user_service.delete_user(db, user_id=user_id)
+        if delete_result["Status"] == "Failed":
+            return delete_result
         return delete_result
-    return delete_result
+    return HTTPException(status_code=401, detail="Unauthorized")
 
 
 @router.get("/users/me/", response_model=UserResponseModel)

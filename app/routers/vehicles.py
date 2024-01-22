@@ -16,7 +16,7 @@ from app.services import vehicles as vehicle_services
 
 from app.utils.mapper import map_string_to_model
 
-from app.routers.security.dependencies import CURRENT_USER
+from app.routers.security.dependencies import CURRENT_USER, SESSION
 
 router = APIRouter(prefix="/vehicles", tags=["Vehicles"])
 
@@ -25,7 +25,7 @@ VEHICLE_RESPONSE_MODEL = Annotated[vehicle_schemas.VehicleOutput, Literal["Defau
 
 
 @router.get("/{vehicle_id}", status_code=status.HTTP_200_OK, response_model=Optional[VEHICLE_RESPONSE_MODEL])
-def get_vehicle(vehicle_id: int, db: Session = Depends(get_db)) -> Optional[VEHICLE_RESPONSE_MODEL]:
+def get_vehicle(vehicle_id: int, db: SESSION) -> Optional[VEHICLE_RESPONSE_MODEL]:
     db_vehicle = vehicle_services.get_vehicle_by_id(db, vehicle_id=vehicle_id)
     if not db_vehicle:
         raise HTTPException(
@@ -37,7 +37,7 @@ def get_vehicle(vehicle_id: int, db: Session = Depends(get_db)) -> Optional[VEHI
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[VEHICLE_RESPONSE_MODEL])
 def get_vehicles(
-    db: Session = Depends(get_db),
+    db: SESSION,
     skip: int = 0,
     limit: int = 100,
     filter_key: Optional[str] = None,
@@ -58,7 +58,8 @@ def get_vehicles(
     
     vehicles = vehicle_services.get_vehicles(
         db, skip=skip, limit=limit,
-        to_join=to_join, models_to_join=models_to_join,
+        to_join=to_join, 
+        models_to_join=models_to_join_classes,
         joined_model_filters=joined_model_filters,
         include_unit_model=include_unit_model
     )

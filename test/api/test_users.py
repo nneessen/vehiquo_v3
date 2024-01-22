@@ -4,16 +4,20 @@ from fastapi.testclient import TestClient
 from fastapi import status
 from sqlalchemy.orm import Session
 
-from app.schemas.users import UserCreate, UserDelete, UserOutput, UserUpdate
+from app.schemas.users import (
+    UserLogin,
+    UserCreate,
+    UserInDB
+    )
 from app.services.users import get_user_by_email, create_user, get_user_by_username, get_user, get_user_by_id, authenticate_user
 from test.utils.user_randomizer import random_user_create, create_admin
 
 #✅
-# def test_create_admin(client: TestClient, db: Session) -> None:
-#     admin_user_data = create_admin()
-#     user_in = dict(UserCreate(**admin_user_data))
-#     r = client.post("/api/v1/users/", json=user_in)
-#     assert 200 <= r.status_code < 300
+def test_create_admin(client: TestClient, db: Session) -> None:
+    admin_user_data = create_admin()
+    user_in = dict(UserCreate(**admin_user_data))
+    r = client.post("/api/v1/users/", json=user_in)
+    assert r.status_code == 400
 
 
 #✅
@@ -26,11 +30,32 @@ from test.utils.user_randomizer import random_user_create, create_admin
 
 
 #✅
-# def test_authenticate_user(db: Session) -> None:
-#     user = get_user_by_username(db, "admin")
-#     authenticated_user = authenticate_user(db, username=user.username, password="password")
-#     assert authenticated_user
-#     assert user.username == authenticated_user.username
+def test_login(client: TestClient, db: Session) -> None:
+    user_data = {
+        "username": "admin",
+        "password": "password",
+    }
+    user_in = dict(UserLogin(**user_data))
+    r = client.post("/api/v1/token", data=user_in)
+    assert r.status_code == status.HTTP_200_OK
+    assert "access_token" in r.json()
+    assert r.json()["token_type"] == "bearer"
+
+
+def create_token(client: TestClient, username: str, password: str) -> Dict[str, str]:
+    user_data = {
+        "username": username,
+        "password": password,
+    }
+    user_in = dict(UserLogin(**user_data))
+    r = client.post("/api/v1/token", data=user_in)
+    return r.json()['access_token']
+
+
+def test_delete_user_with_admin_user(db: Session, client: TestClient) -> None:
+    admin_token = create_token(client, "admin", "password")
+    r = client.delete("/api/v1/users/4", headers={"Authorization": f"Bearer {admin_token}"})
+    assert r.status_code == status.HTTP_200_OK
 
 
 #✅

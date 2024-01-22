@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from fastapi import status
 from sqlalchemy.orm import Session
 
-from app.schemas.stores import StoreUpdate, StoreDelete, StoreOutput, StoreCreate
+from app.schemas.stores import StoreUpdate, StoreDelete, StoreOutput, StoreAdd
 from app.services.stores import create_store, get_store_by_id
 
 from test.utils.store_randomizer import random_store_create
