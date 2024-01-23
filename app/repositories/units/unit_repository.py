@@ -1,14 +1,17 @@
-from typing import Any, List, Optional
+from typing import List, Optional
 
-from sqlalchemy import and_, select
 from sqlalchemy.orm import Session
 
-from app.exceptions.custom_exceptions import (AddUnitException,
-                                              DeleteUnitException,
-                                              UpdateUnitException)
+from app.exceptions.custom_exceptions import (
+    AddUnitException,
+    DeleteUnitException,
+    UpdateUnitException,
+    GetUnitException
+)
 from app.models.units import Unit
-from app.models.vehicles import Vehicle
+
 from app.repositories.base.sql_repository import SqlRepository
+
 from app.repositories.units.unit_repository_base import UnitRepositoryBase
 
 
@@ -28,7 +31,7 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
         try:
             return super()._delete(unit_id)
         except Exception as e:
-            message = f"Error deleting unit with id {unit_id}"
+            message = f"Error deleting unit with id {unit_id} ::: {e}"
             error_code = "unit_delete_error"
             raise DeleteUnitException(message, error_code)
 
@@ -49,9 +52,19 @@ class UnitRepository(UnitRepositoryBase, SqlRepository[Unit]):
         models_to_join: Optional[List[str]] = None,
         joined_model_filters: Optional[dict] = None,
     ) -> List[Unit]:
-        return super()._get_all(
+        try:
+            return super()._get_all(
             skip, limit, filter, to_join, models_to_join, joined_model_filters
         )
+        except Exception as e:
+            message = f"Error getting all units"
+            error_code = "units_get_all_error"
+            raise GetUnitException(message, error_code)
 
     def update_unit(self, unit: Unit, unit_id: int) -> Unit:
-        return super()._update(unit, unit_id)
+        try:
+            return super()._update(unit, unit_id)
+        except Exception as e:
+            message = f"Error updating unit with id {unit_id}"
+            error_code = "unit_update_error"
+            raise UpdateUnitException(message, error_code)

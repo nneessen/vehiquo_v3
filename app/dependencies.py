@@ -1,13 +1,12 @@
 import os
 import secrets
 
-import jwt
+from jose import jwt, JWTError
 from fastapi import Header, HTTPException
 
 from app.database import SessionLocal
 
-# SECRET_KEY = os.environ.get("SECRET_KEY")
-SECRET_KEY = "secret"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = "HS256"
 
 
