@@ -103,7 +103,8 @@ def check_and_expire_units(db: Session) -> None:
 def update_unit(
     db: Session, unit: unit_schema.UnitUpdate, unit_id: int
 ) -> unit_model.Unit:
-    db_unit = UNIT_OF_WORK(db).units.update_unit(unit, unit_id)
-    db.commit()
-    db.refresh(db_unit)
-    return db_unit
+    with UnitOfWork(db) as uow:
+        db_unit = uow.units.update_unit(unit, unit_id)
+        uow.commit()
+        uow.refresh(db_unit)
+        return db_unit

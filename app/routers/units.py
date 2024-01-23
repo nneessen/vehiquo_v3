@@ -42,18 +42,18 @@ def create_unit(
 
 # ✅
 @router.get(
-    "/{unit_id}", status_code=status.HTTP_200_OK, response_model=UnitResponseModel
+    "/{unit_id}", status_code=status.HTTP_200_OK, response_model=Optional[UnitResponseModel]
 )
 def get_unit(
-    # current_user: CURRENT_USER,
+    current_user: CURRENT_USER,
     unit_id: int,
     db: Session = Depends(get_db),
     include_vehicle: bool = False,
     include_store: bool = False,
-) -> UnitResponseModel:
+) -> Optional[UnitResponseModel]:
 
-    # if not current_user.is_active:
-    #     raise HTTPException(status_code=400, detail="Inactive user")
+    if not current_user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
 
     unit = unit_service.get_unit_by_id(
         db,
@@ -117,7 +117,7 @@ def get_units(
     return units
 
 
-@router.delete("/{unit_id}", status_code=status.HTTP_200_OK, response_model=None)
+@router.delete("/{unit_id}", status_code=status.HTTP_200_OK, response_model=Optional[Any])
 def delete_unit(
     current_user: CURRENT_USER, unit_id: int, db: Session = Depends(get_db)
 ) -> None:
@@ -142,14 +142,14 @@ async def expire_units(
 
 
 @router.put(
-    "/{unit_id}", status_code=status.HTTP_200_OK, response_model=units_schema.UnitOutput
+    "/{unit_id}", status_code=status.HTTP_200_OK, response_model=Optional[UnitResponseModel]
 )
 def update_unit(
     current_user: CURRENT_USER,
     unit_id: int,
     unit: units_schema.UnitAdd,
     db: Session = Depends(get_db),
-) -> units_schema.UnitOutput:
+) -> Optional[UnitResponseModel]:
 
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")

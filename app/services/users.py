@@ -2,7 +2,7 @@ from typing import Any, List, Optional
 
 import bcrypt
 from fastapi import HTTPException
-from sqlalchemy import and_, delete, func, insert, inspect, not_, update
+from sqlalchemy import or_, and_, func, desc, asc, text, select, update
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import FlushError
@@ -11,27 +11,17 @@ from app.models import users as models
 from app.models.stores import Store
 from app.schemas import users as schemas
 from app.unit_of_work.unit_of_work import UnitOfWork
-from app.utils.decorators import timeit
 
 
 
 # ✅ Takes 0.1808s to create user
-def create_user(db: Session, user: schemas.UserCreate) -> models.User:
-    try:
+def create_user(db: Session, user: schemas.UserCreate, include_store: bool = False) -> models.User:
         with UnitOfWork(db) as uow:
             db_user = uow.users.add_user(user)
             db_user.hashed_password = hash_password(user.password)
             db_user.password = None
             uow.commit()
-    except (IntegrityError, InvalidRequestError, FlushError) as e:
-        error_details = {
-            IntegrityError: "Email or username already registered",
-            InvalidRequestError: "Invalid request",
-            FlushError: "Flush error",
-        }
-        detail = error_details.get(type(e), "Unknown error")
-        return {"Status": "Failed", "Detail": detail}
-    return get_user_by_email(db, email=user.email)
+            return db_user.serialize(include_store=include_store)
 
 
 def get_user_by_id(db: Session, user_id: int) -> Optional[models.User]:
@@ -40,12 +30,11 @@ def get_user_by_id(db: Session, user_id: int) -> Optional[models.User]:
         return user.serialize()
 
 
-def get_user_by_email(db: Session, email: str) -> Optional[models.User]:
-    return db.query(models.User).filter(models.User.email == email).first()
+def get_user_by_email_or_username(db: Session, email: str, username: str) -> Optional[models.User]:
+    stmt = select(models.User).where(or_(models.User.email == email, models.User.username == username))
+    result = db.execute(stmt).first()
+    return result[0] if result else None
 
-
-def get_user_by_username(db: Session, username: str) -> Optional[models.User]:
-    return db.query(models.User).filter(models.User.username == username).first()
 
 # ✅
 def authenticate_user(
@@ -71,7 +60,9 @@ def verify_password(password: str, hashed_password: str) -> bool:
 
 # ✅
 def get_user(db, username: str):
-    return db.query(models.User).filter(models.User.username == username).first()
+    stmt = select(models.User).where(models.User.username == username)
+    result = db.execute(stmt).first()
+    return result[0] if result else None
 
 
 # ✅
@@ -106,6 +97,12 @@ def delete_user(db: Session, user_id: int) -> None:
     except Exception as e:
         return {"Status": "Failed", "Detail": f"Error deleting user with id {user_id}"}
 
+
+def update_user(db: Session, user_id: int, user: schemas.UserUpdate) -> models.User:
+    with UnitOfWork(db) as uow:
+        db_user = uow.users.update_user(user_id, user)
+        uow.commit()
+        return db_user.serialize()
 
 # ✅
 def confirm(db: Session, user: models.User) -> models.User:

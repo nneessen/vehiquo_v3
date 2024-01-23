@@ -15,6 +15,7 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
     def __init__(self, db: Session) -> None:
         super().__init__(db, User)
 
+
     def add_user(self, user: User) -> User:
         try:
             return super()._add(user)
@@ -22,6 +23,7 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
             message = f"Error adding {user}"
             error_code = "user_add_error"
             raise AddUserException(message, error_code)
+
 
     def delete_user(self, user_id: int) -> User:
         try:
@@ -31,6 +33,7 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
             error_code = "UserRepository.delete_user error"
             raise DeleteUserException(message, error_code)
 
+
     def get_user(self, user_id: int) -> Optional[User]:
         try:
             return super()._get(user_id)
@@ -38,6 +41,7 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
             message = f"Error getting user with id {user_id}"
             error_code = "user_get_error"
             raise GetUserException(message, error_code)
+
 
     def get_users(
         self,
@@ -51,6 +55,7 @@ class UserRepository(UserRepositoryBase, SqlRepository[User]):
         return super()._get_all(
             skip, limit, filter, to_join, models_to_join, joined_model_filters
         )
+
 
     def update_user(self, user: User, user_id: int) -> User:
         try:
